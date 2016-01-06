@@ -1,0 +1,151 @@
+2014-05-29  Jakub Jelinek  <jakub@redhat.com>
+
+	* lib/target-libpath.exp (set_gcc_exec_prefix_env_var,
+	restore_gcc_exec_prefix_env_var): New procedures.
+	(set_ld_library_path_env_vars,
+	restore_ld_library_path_env_vars): Use them.
+	* lib/c-compat.exp: Load target-libpath.exp.
+	(compat-use-alt-compiler): Call restore_gcc_exec_prefix_env_var.
+	(compat-use-tst-compiler): Call set_gcc_exec_prefix_env_var.
+	* g++.dg/compat/compat.exp (compat-use-alt-compiler): Call
+	restore_gcc_exec_prefix_env_var.
+	* g++.dg/compat/struct-layout-1.exp (compat-use-alt-compiler):
+	Likewise.
+
+--- gcc/testsuite/lib/target-libpath.exp.jj	2014-03-20 16:29:20.000000000 +0100
++++ gcc/testsuite/lib/target-libpath.exp	2014-05-29 19:32:58.192043417 +0200
+@@ -28,6 +28,21 @@ set orig_gcc_exec_prefix_checked 0
+ 
+ 
+ #######################################
++# proc set_gcc_exec_prefix_env_var { }
++#######################################
++
++proc set_gcc_exec_prefix_env_var { } {
++  global TEST_GCC_EXEC_PREFIX
++  global env
++
++  # Set GCC_EXEC_PREFIX for the compiler under test to pick up files not in
++  # the build tree from a specified location (normally the install tree).
++  if [info exists TEST_GCC_EXEC_PREFIX] {
++    setenv GCC_EXEC_PREFIX "$TEST_GCC_EXEC_PREFIX"
++  }
++}
++
++#######################################
+ # proc set_ld_library_path_env_vars { }
+ #######################################
+ 
+@@ -49,7 +64,6 @@ proc set_ld_library_path_env_vars { } {
+   global orig_ld_library_path_64
+   global orig_dyld_library_path
+   global orig_gcc_exec_prefix
+-  global TEST_GCC_EXEC_PREFIX
+   global env
+ 
+   # Save the original GCC_EXEC_PREFIX.
+@@ -61,11 +75,7 @@ proc set_ld_library_path_env_vars { } {
+     set orig_gcc_exec_prefix_checked 1
+   }
+ 
+-  # Set GCC_EXEC_PREFIX for the compiler under test to pick up files not in
+-  # the build tree from a specified location (normally the install tree).
+-  if [info exists TEST_GCC_EXEC_PREFIX] {
+-    setenv GCC_EXEC_PREFIX "$TEST_GCC_EXEC_PREFIX"
+-  }
++  set_gcc_exec_prefix_env_var
+ 
+   # Setting the ld library path causes trouble when testing cross-compilers.
+   if { [is_remote target] } {
+@@ -164,6 +174,22 @@ proc set_ld_library_path_env_vars { } {
+ }
+ 
+ #######################################
++# proc restore_gcc_exec_prefix_env_var { }
++#######################################
++
++proc restore_gcc_exec_prefix_env_var { } {
++  global orig_gcc_exec_prefix_saved
++  global orig_gcc_exec_prefix
++  global env
++
++  if { $orig_gcc_exec_prefix_saved } {
++    setenv GCC_EXEC_PREFIX "$orig_gcc_exec_prefix"
++  } elseif [info exists env(GCC_EXEC_PREFIX)] {
++    unsetenv GCC_EXEC_PREFIX
++  }
++}
++
++#######################################
+ # proc restore_ld_library_path_env_vars { }
+ #######################################
+ 
+@@ -175,21 +201,15 @@ proc restore_ld_library_path_env_vars {
+   global orig_ld_library_path_32_saved
+   global orig_ld_library_path_64_saved
+   global orig_dyld_library_path_saved
+-  global orig_gcc_exec_prefix_saved
+   global orig_ld_library_path
+   global orig_ld_run_path
+   global orig_shlib_path
+   global orig_ld_library_path_32
+   global orig_ld_library_path_64
+   global orig_dyld_library_path
+-  global orig_gcc_exec_prefix
+   global env
+ 
+-  if { $orig_gcc_exec_prefix_saved } {
+-    setenv GCC_EXEC_PREFIX "$orig_gcc_exec_prefix"
+-  } elseif [info exists env(GCC_EXEC_PREFIX)] {
+-    unsetenv GCC_EXEC_PREFIX
+-  }
++  restore_gcc_exec_prefix_env_var
+ 
+   if { $orig_environment_saved == 0 } {
+     return
+--- gcc/testsuite/lib/c-compat.exp.jj	2014-01-03 11:40:40.000000000 +0100
++++ gcc/testsuite/lib/c-compat.exp	2014-05-29 19:33:15.870952346 +0200
+@@ -28,6 +28,7 @@ global compat_skip_list
+ # compilers for compatibility tests.
+ 
+ load_lib target-supports.exp
++load_lib target-libpath.exp
+ 
+ #
+ # compat-use-alt-compiler -- make the alternate compiler the default
+@@ -47,6 +48,7 @@ proc compat-use-alt-compiler { } {
+ 	if { $compat_alt_color == 0 } then {
+ 	    regsub -- "-fdiagnostics-color=never" $TEST_ALWAYS_FLAGS "" TEST_ALWAYS_FLAGS
+ 	}
++	restore_gcc_exec_prefix_env_var
+     }
+ }
+ 
+@@ -64,6 +66,7 @@ proc compat-use-tst-compiler { } {
+     if { $compat_same_alt == 0 } then {
+ 	set GCC_UNDER_TEST $compat_save_gcc_under_test
+ 	set TEST_ALWAYS_FLAGS $compat_save_TEST_ALWAYS_FLAGS
++	set_gcc_exec_prefix_env_var
+     }
+ }
+ 
+--- gcc/testsuite/g++.dg/compat/compat.exp.jj	2014-01-03 11:40:43.000000000 +0100
++++ gcc/testsuite/g++.dg/compat/compat.exp	2014-05-29 19:28:57.227272946 +0200
+@@ -55,6 +55,7 @@ proc compat-use-alt-compiler { } {
+ 	set ALWAYS_CXXFLAGS ""
+ 	set ld_library_path $alt_ld_library_path
+ 	set_ld_library_path_env_vars
++	restore_gcc_exec_prefix_env_var
+     }
+ }
+ 
+--- gcc/testsuite/g++.dg/compat/struct-layout-1.exp.jj	2014-01-03 11:40:43.000000000 +0100
++++ gcc/testsuite/g++.dg/compat/struct-layout-1.exp	2014-05-29 19:29:58.050962141 +0200
+@@ -60,6 +60,7 @@ proc compat-use-alt-compiler { } {
+ 	set ALWAYS_CXXFLAGS ""
+ 	set ld_library_path $alt_ld_library_path
+ 	set_ld_library_path_env_vars
++	restore_gcc_exec_prefix_env_var
+     }
+ }
+ 
