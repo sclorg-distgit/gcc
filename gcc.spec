@@ -1,12 +1,12 @@
 %{?scl:%scl_package gcc}
 %{?scl:%global __strip strip}
 %{?scl:%global __objdump objdump}
-%global DATE 20150902
-%global SVNREV 227412
-%global gcc_version 5.2.1
+%global DATE 20160406
+%global SVNREV 234777
+%global gcc_version 5.3.1
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %{release}, append them after %{gcc_release} on Release: line.
-%global gcc_release 2
+%global gcc_release 6
 %global mpc_version 0.8.1
 %global isl_version 0.14
 %global graphviz_version 2.26.0
@@ -82,7 +82,7 @@ Summary: GCC version 5
 Name: %{?scl_prefix}gcc
 #Name: %{?scl_prefix}gcc%{!?scl:5}
 Version: %{gcc_version}
-Release: %{gcc_release}.2%{?dist}
+Release: %{gcc_release}.1%{?dist}
 # libgcc, libgfortran, libmudflap, libgomp, libstdc++ and crtstuff have
 # GCC Runtime Exception.
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
@@ -247,7 +247,7 @@ Patch11: gcc5-no-add-needed.patch
 Patch12: gcc5-libgo-p224.patch
 Patch13: gcc5-aarch64-async-unw-tables.patch
 Patch14: gcc5-libsanitize-aarch64-va42.patch
-Patch15: gcc5-pr65689.patch
+Patch15: gcc5-rh1279639.patch
 
 Patch1000: gcc5-libstdc++-compat.patch
 Patch1001: gcc5-libgfortran-compat.patch
@@ -606,7 +606,7 @@ This package contains the Memory Protection Extensions static runtime libraries.
 rm -f libgo/go/crypto/elliptic/p224{,_test}.go
 %patch13 -p0 -b .aarch64-async-unw-tables~
 %patch14 -p0 -b .libsanitize-aarch64-va42~
-%patch15 -p0 -b .pr65689~
+%patch15 -p0 -b .rh1279639~
 sed -i -e 's/ -Wl,-z,nodlopen//g' gcc/ada/gcc-interface/Makefile.in
 
 %patch1000 -p0 -b .libstdc++-compat~
@@ -1267,6 +1267,7 @@ echo '/* GNU ld script */
 INPUT ( %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libmpxwrappers.so.0 )' > libmpxwrappers.so
 %endif
 mv -f %{buildroot}%{_prefix}/%{_lib}/libstdc++.*a $FULLLPATH/
+mv -f %{buildroot}%{_prefix}/%{_lib}/libstdc++fs.*a $FULLLPATH/
 mv -f %{buildroot}%{_prefix}/%{_lib}/libsupc++.*a .
 %if %{build_fortran}
 mv -f %{buildroot}%{_prefix}/%{_lib}/libgfortran.*a .
@@ -1386,6 +1387,8 @@ mv -f %{buildroot}%{_prefix}/lib64/libquadmath.*a 64/
 %endif
 ln -sf lib32/libstdc++.a libstdc++.a
 ln -sf ../lib64/libstdc++.a 64/libstdc++.a
+ln -sf lib32/libstdc++fs.a libstdc++fs.a
+ln -sf ../lib64/libstdc++fs.a 64/libstdc++fs.a
 ln -sf lib32/libstdc++_nonshared.a libstdc++_nonshared.a
 ln -sf ../lib64/libstdc++_nonshared.a 64/libstdc++_nonshared.a
 %if %{build_libquadmath}
@@ -1508,6 +1511,8 @@ mv -f %{buildroot}%{_prefix}/lib/libquadmath.*a 32/
 %ifarch sparc64 ppc64
 ln -sf ../lib32/libstdc++.a 32/libstdc++.a
 ln -sf lib64/libstdc++.a libstdc++.a
+ln -sf ../lib32/libstdc++fs.a 32/libstdc++fs.a
+ln -sf lib64/libstdc++fs.a libstdc++fs.a
 ln -sf ../lib32/libstdc++_nonshared.a 32/libstdc++_nonshared.a
 ln -sf lib64/libstdc++_nonshared.a libstdc++_nonshared.a
 %if %{build_libquadmath}
@@ -1545,6 +1550,7 @@ ln -sf lib64/libmpxwrappers.a libmpxwrappers.a
 %else
 %ifarch %{multilib_64_archs}
 ln -sf ../../../%{multilib_32_arch}-%{_vendor}-%{_target_os}%{?_gnu}/%{gcc_version}/libstdc++.a 32/libstdc++.a
+ln -sf ../../../%{multilib_32_arch}-%{_vendor}-%{_target_os}%{?_gnu}/%{gcc_version}/libstdc++fs.a 32/libstdc++fs.a
 ln -sf ../../../%{multilib_32_arch}-%{_vendor}-%{_target_os}%{?_gnu}/%{gcc_version}/libstdc++_nonshared.a 32/libstdc++_nonshared.a
 %if %{build_libquadmath}
 ln -sf ../../../%{multilib_32_arch}-%{_vendor}-%{_target_os}%{?_gnu}/%{gcc_version}/libquadmath.a 32/libquadmath.a
@@ -1570,6 +1576,30 @@ ln -sf ../../../%{multilib_32_arch}-%{_vendor}-%{_target_os}%{?_gnu}/%{gcc_versi
 ln -sf ../../../%{multilib_32_arch}-%{_vendor}-%{_target_os}%{?_gnu}/%{gcc_version}/libmpxwrappers.a 32/libmpxwrappers.a
 %endif
 %endif
+%endif
+
+# If we are building a debug package then copy all of the static archives
+# into the debug directory to keep them as unstripped copies.
+%if 0%{?_enable_debug_packages}
+mkdir -p $RPM_BUILD_ROOT%{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/lib/debug%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}
+adirs="$FULLPATH"
+if [ $FULLLPATH -ne $FULLPATH ]; then
+  adirs="$adirs $FULLLPATH"
+fi
+for f in `find $adirs -maxdepth 1 -a \
+		 \( -name libgfortran.a -o -name libgomp.a \
+		    -o -name libgcc.a -o -name libgcc_eh.a -o -name libgcov.a \
+		    -o -name libquadmath.a -o -name libitm.a \
+		    -o -name libatomic.a -o -name libasan.a \
+		    -o -name libtsan.a -o -name libubsan.a \
+		    -o -name liblsan.a -o -name libcilkrts.a \
+		    -o -name libmpx.a -o -name libmpxwrappers.a \
+		    -o -name libcc1.a -o -name libstdc++_nonshared.a \
+		    -o -name libgfortran_nonshared.a -o -name libsupc++.a \
+		    -o -name libstdc++.a -o -name libcaf_single.a \
+		    -o -name libgfortranbegin.a -o -name libstdc++fs.a \) -a -type f`; do
+  cp -a $f $RPM_BUILD_ROOT%{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/lib/debug%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/
+done
 %endif
 
 # Strip debug info from Fortran/ObjC/Java static libraries
@@ -2207,6 +2237,7 @@ fi
 %dir %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/64
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/64/libstdc++.so
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/64/libstdc++.a
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/64/libstdc++fs.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/64/libstdc++_nonshared.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/64/libsupc++.a
 %endif
@@ -2214,6 +2245,7 @@ fi
 %dir %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/32
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/32/libstdc++.so
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/32/libstdc++.a
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/32/libstdc++fs.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/32/libstdc++_nonshared.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/32/libsupc++.a
 %endif
@@ -2223,6 +2255,7 @@ fi
 %endif
 %ifarch sparcv9 sparc64 ppc ppc64
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libstdc++.a
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libstdc++fs.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libstdc++_nonshared.a
 %endif
 %doc rpm.doc/changelogs/gcc/cp/ChangeLog*
@@ -2240,15 +2273,18 @@ fi
 %ifarch sparcv9 ppc
 %dir %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib32
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib32/libstdc++.a
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib32/libstdc++fs.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib32/libstdc++_nonshared.a
 %endif
 %ifarch sparc64 ppc64
 %dir %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib64
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib64/libstdc++.a
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib64/libstdc++fs.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/lib64/libstdc++_nonshared.a
 %endif
 %ifnarch sparcv9 sparc64 ppc ppc64
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libstdc++.a
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libstdc++fs.a
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/libstdc++_nonshared.a
 %endif
 %ifnarch sparcv9 ppc %{multilib_64_archs}
@@ -2555,6 +2591,20 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Thu Apr  7 2016 Jakub Jelinek <jakub@redhat.com> 5.3.1-6.1
+- fix up libstdc++_nonshared.a - don't use .hidden directive on
+  *.part.* and *.isra.* symbols
+
+* Wed Apr  6 2016 Jakub Jelinek <jakub@redhat.com> 5.3.1-6
+- update from Fedora 5.3.1-5 (#1305952)
+- include non-stripped copies of *.a libraries in the debuginfo subpackage
+
+* Tue Apr  5 2016 Jakub Jelinek <jakub@redhat.com> 5.3.1-5
+- update from Fedora 5.3.1-5 (#1305952)
+
+* Fri Feb 12 2016 Jakub Jelinek <jakub@redhat.com> 5.3.1-4
+- update from Fedora 5.3.1-4 (#1305952)
+
 * Mon Oct 12 2015 Jakub Jelinek <jakub@redhat.com> 5.2.1-2.2
 - add ld.bfd and ld.gold symlinks (#1269279)
 
