@@ -1,5 +1,5 @@
---- libstdc++-v3/config/locale/gnu/c_locale.cc.jj	2016-07-19 10:33:27.044869443 +0200
-+++ libstdc++-v3/config/locale/gnu/c_locale.cc	2016-07-21 19:15:05.585534896 +0200
+--- libstdc++-v3/config/locale/gnu/c_locale.cc.jj	2016-07-21 20:21:57.317924322 +0200
++++ libstdc++-v3/config/locale/gnu/c_locale.cc	2016-07-22 11:37:16.381402838 +0200
 @@ -41,6 +41,7 @@ namespace std _GLIBCXX_VISIBILITY(defaul
  {
  _GLIBCXX_BEGIN_NAMESPACE_VERSION
@@ -29,8 +29,8 @@
  _GLIBCXX_LDBL_COMPAT(_ZSt14__convert_to_vIdEvPKcRT_RSt12_Ios_IostateRKP15__locale_struct, _ZSt14__convert_to_vIeEvPKcRT_RSt12_Ios_IostateRKP15__locale_struct);
  #endif // _GLIBCXX_LONG_DOUBLE_COMPAT
 +#endif
---- libstdc++-v3/libsupc++/eh_exception.cc.jj	2016-07-19 10:33:27.055869301 +0200
-+++ libstdc++-v3/libsupc++/eh_exception.cc	2016-07-21 19:15:05.589534848 +0200
+--- libstdc++-v3/libsupc++/eh_exception.cc.jj	2016-07-21 20:21:57.370923683 +0200
++++ libstdc++-v3/libsupc++/eh_exception.cc	2016-07-22 11:37:16.381402838 +0200
 @@ -26,6 +26,7 @@
  #include "exception"
  #include <cxxabi.h>
@@ -47,8 +47,8 @@
  
  // Transactional clones for the destructors and what().
  // what() is effectively transaction_pure, but we do not want to annotate it
---- libstdc++-v3/acinclude.m4.jj	2016-07-19 10:33:27.046869417 +0200
-+++ libstdc++-v3/acinclude.m4	2016-07-21 19:15:05.601534702 +0200
+--- libstdc++-v3/acinclude.m4.jj	2016-07-21 20:21:57.335924105 +0200
++++ libstdc++-v3/acinclude.m4	2016-07-22 11:37:16.382402826 +0200
 @@ -49,7 +49,7 @@ AC_DEFUN([GLIBCXX_CONFIGURE], [
    # Keep these sync'd with the list in Makefile.am.  The first provides an
    # expandable list at autoconf time; the second provides an expandable list
@@ -58,8 +58,8 @@
    SUBDIRS='glibcxx_SUBDIRS'
  
    # These need to be absolute paths, yet at the same time need to
---- libstdc++-v3/src/nonshared98/int128.S.jj	2016-07-21 19:15:05.601534702 +0200
-+++ libstdc++-v3/src/nonshared98/int128.S	2016-07-21 19:38:16.341716194 +0200
+--- libstdc++-v3/src/nonshared98/int128.S.jj	2016-07-22 11:37:16.383402813 +0200
++++ libstdc++-v3/src/nonshared98/int128.S	2016-07-22 11:37:16.383402813 +0200
 @@ -0,0 +1,216 @@
 +/* Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +
@@ -277,8 +277,8 @@
 +	STRING	"o"
 +#endif
 +	.section	.note.GNU-stack,"",@progbits
---- libstdc++-v3/src/nonshared98/pure.cc.jj	2016-07-21 19:15:05.602534689 +0200
-+++ libstdc++-v3/src/nonshared98/pure.cc	2016-07-21 19:15:05.601534702 +0200
+--- libstdc++-v3/src/nonshared98/pure.cc.jj	2016-07-22 11:37:16.383402813 +0200
++++ libstdc++-v3/src/nonshared98/pure.cc	2016-07-22 11:37:16.383402813 +0200
 @@ -0,0 +1,51 @@
 +// -*- C++ -*- 
 +// Copyright (C) 2000-2016 Free Software Foundation
@@ -331,8 +331,8 @@
 +  writestr ("deleted virtual method called\n");
 +  std::terminate ();
 +}
---- libstdc++-v3/src/nonshared98/collate_members.cc.jj	2016-07-21 19:15:05.602534689 +0200
-+++ libstdc++-v3/src/nonshared98/collate_members.cc	2016-07-21 19:15:05.602534689 +0200
+--- libstdc++-v3/src/nonshared98/collate_members.cc.jj	2016-07-22 11:37:16.383402813 +0200
++++ libstdc++-v3/src/nonshared98/collate_members.cc	2016-07-22 11:37:16.383402813 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -358,8 +358,8 @@
 +
 +#define _GLIBCXX_USE_CXX11_ABI 1
 +#include "../c++98/collate_members.cc"
---- libstdc++-v3/src/nonshared98/wlocale-inst.cc.jj	2016-07-21 19:15:05.602534689 +0200
-+++ libstdc++-v3/src/nonshared98/wlocale-inst.cc	2016-07-21 19:15:05.602534689 +0200
+--- libstdc++-v3/src/nonshared98/wlocale-inst.cc.jj	2016-07-22 11:37:16.384402801 +0200
++++ libstdc++-v3/src/nonshared98/wlocale-inst.cc	2016-07-22 11:37:16.384402801 +0200
 @@ -0,0 +1,28 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -389,8 +389,8 @@
 +#define C wchar_t
 +#include "locale-inst.cc"
 +#endif
---- libstdc++-v3/src/nonshared98/hash_bytes.cc.jj	2016-07-21 19:15:05.602534689 +0200
-+++ libstdc++-v3/src/nonshared98/hash_bytes.cc	2016-07-21 19:15:05.602534689 +0200
+--- libstdc++-v3/src/nonshared98/hash_bytes.cc.jj	2016-07-22 11:37:16.384402801 +0200
++++ libstdc++-v3/src/nonshared98/hash_bytes.cc	2016-07-22 11:37:16.384402801 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -415,8 +415,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/hash_bytes.cc"
---- libstdc++-v3/src/nonshared98/compatibility-debug_list-2.cc.jj	2016-07-21 19:15:05.602534689 +0200
-+++ libstdc++-v3/src/nonshared98/compatibility-debug_list-2.cc	2016-07-21 19:15:05.602534689 +0200
+--- libstdc++-v3/src/nonshared98/compatibility-debug_list-2.cc.jj	2016-07-22 11:37:16.384402801 +0200
++++ libstdc++-v3/src/nonshared98/compatibility-debug_list-2.cc	2016-07-22 11:37:16.384402801 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -441,8 +441,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++98/compatibility-debug_list-2.cc"
---- libstdc++-v3/src/nonshared98/eh_catch.cc.jj	2016-07-21 19:15:05.603534677 +0200
-+++ libstdc++-v3/src/nonshared98/eh_catch.cc	2016-07-21 19:15:05.602534689 +0200
+--- libstdc++-v3/src/nonshared98/eh_catch.cc.jj	2016-07-22 11:37:16.384402801 +0200
++++ libstdc++-v3/src/nonshared98/eh_catch.cc	2016-07-22 11:37:16.384402801 +0200
 @@ -0,0 +1,39 @@
 +// -*- C++ -*- Exception handling routines for catching.
 +// Copyright (C) 2001-2016 Free Software Foundation, Inc.
@@ -483,8 +483,8 @@
 +  return 0;
 +#endif
 +}
---- libstdc++-v3/src/nonshared98/eh_exception.cc.jj	2016-07-21 19:15:05.603534677 +0200
-+++ libstdc++-v3/src/nonshared98/eh_exception.cc	2016-07-21 19:15:05.603534677 +0200
+--- libstdc++-v3/src/nonshared98/eh_exception.cc.jj	2016-07-22 11:37:16.385402788 +0200
++++ libstdc++-v3/src/nonshared98/eh_exception.cc	2016-07-22 11:37:16.385402788 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 1994-2016 Free Software Foundation, Inc.
 +//
@@ -510,8 +510,8 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX98 1
 +#include "../libsupc++/eh_exception.cc"
---- libstdc++-v3/src/nonshared98/c++locale.cc.jj	2016-07-21 19:15:05.603534677 +0200
-+++ libstdc++-v3/src/nonshared98/c++locale.cc	2016-07-21 19:15:05.603534677 +0200
+--- libstdc++-v3/src/nonshared98/c++locale.cc.jj	2016-07-22 11:37:16.385402788 +0200
++++ libstdc++-v3/src/nonshared98/c++locale.cc	2016-07-22 11:37:16.385402788 +0200
 @@ -0,0 +1,33 @@
 +// Copyright (C) 2016 Free Software Foundation, Inc.
 +//
@@ -546,8 +546,8 @@
 +asm (".hidden _ZNSt6vectorIPSt12Catalog_infoSaIS1_EE13_M_insert_auxEN9__gnu_cxx17__normal_iteratorIPS1_S3_EERKS1_");
 +asm (".hidden _ZN9__gnu_cxx13__scoped_lockD1Ev");
 +asm (".hidden _ZN9__gnu_cxx13__scoped_lockD2Ev");
---- libstdc++-v3/src/nonshared98/eh_tm.cc.jj	2016-07-21 19:15:05.603534677 +0200
-+++ libstdc++-v3/src/nonshared98/eh_tm.cc	2016-07-21 19:15:05.603534677 +0200
+--- libstdc++-v3/src/nonshared98/eh_tm.cc.jj	2016-07-22 11:37:16.385402788 +0200
++++ libstdc++-v3/src/nonshared98/eh_tm.cc	2016-07-22 11:37:16.385402788 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -572,8 +572,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/eh_tm.cc"
---- libstdc++-v3/src/nonshared98/numeric_members.cc.jj	2016-07-21 19:15:05.603534677 +0200
-+++ libstdc++-v3/src/nonshared98/numeric_members.cc	2016-07-21 19:15:05.603534677 +0200
+--- libstdc++-v3/src/nonshared98/numeric_members.cc.jj	2016-07-22 11:37:16.385402788 +0200
++++ libstdc++-v3/src/nonshared98/numeric_members.cc	2016-07-22 11:37:16.385402788 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -599,9 +599,9 @@
 +
 +#define _GLIBCXX_USE_CXX11_ABI 1
 +#include "../c++98/numeric_members.cc"
---- libstdc++-v3/src/nonshared98/locale_facets.cc.jj	2016-07-21 19:15:05.604534665 +0200
-+++ libstdc++-v3/src/nonshared98/locale_facets.cc	2016-07-21 19:15:05.603534677 +0200
-@@ -0,0 +1,30 @@
+--- libstdc++-v3/src/nonshared98/locale_facets.cc.jj	2016-07-22 11:37:16.386402776 +0200
++++ libstdc++-v3/src/nonshared98/locale_facets.cc	2016-07-22 11:50:17.667904937 +0200
+@@ -0,0 +1,29 @@
 +// Copyright (C) 1997-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -626,14 +626,13 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX11
 +#include "../c++98/locale_facets.cc"
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZSt22__verify_grouping_implPKcjS0_j");
 +#else
 +asm (".hidden _ZSt22__verify_grouping_implPKcmS0_m");
 +#endif
-+
---- libstdc++-v3/src/nonshared98/sstream-inst.cc.jj	2016-07-21 19:15:05.604534665 +0200
-+++ libstdc++-v3/src/nonshared98/sstream-inst.cc	2016-07-21 19:15:05.604534665 +0200
+--- libstdc++-v3/src/nonshared98/sstream-inst.cc.jj	2016-07-22 11:37:16.386402776 +0200
++++ libstdc++-v3/src/nonshared98/sstream-inst.cc	2016-07-22 11:37:16.386402776 +0200
 @@ -0,0 +1,39 @@
 +// Explicit instantiation file.
 +
@@ -674,8 +673,8 @@
 +#endif
 +
 +} // namespace
---- libstdc++-v3/src/nonshared98/list-aux-2.cc.jj	2016-07-21 19:15:05.604534665 +0200
-+++ libstdc++-v3/src/nonshared98/list-aux-2.cc	2016-07-21 19:15:05.604534665 +0200
+--- libstdc++-v3/src/nonshared98/list-aux-2.cc.jj	2016-07-22 11:37:16.386402776 +0200
++++ libstdc++-v3/src/nonshared98/list-aux-2.cc	2016-07-22 11:37:16.386402776 +0200
 @@ -0,0 +1,56 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -733,8 +732,8 @@
 +    _ZNSt15_List_node_base6unhookEv();
 +  }
 +}
---- libstdc++-v3/src/nonshared98/nullptr-rtti.S.jj	2016-07-21 19:15:05.604534665 +0200
-+++ libstdc++-v3/src/nonshared98/nullptr-rtti.S	2016-07-21 19:37:09.476525211 +0200
+--- libstdc++-v3/src/nonshared98/nullptr-rtti.S.jj	2016-07-22 11:37:16.387402763 +0200
++++ libstdc++-v3/src/nonshared98/nullptr-rtti.S	2016-07-22 11:37:16.387402763 +0200
 @@ -0,0 +1,166 @@
 +/* Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +
@@ -902,8 +901,8 @@
 +	STRING	"Dn"
 +#endif
 +	.section	.note.GNU-stack,"",@progbits
---- libstdc++-v3/src/nonshared98/eh_alloc.cc.jj	2016-07-21 19:15:05.604534665 +0200
-+++ libstdc++-v3/src/nonshared98/eh_alloc.cc	2016-07-21 19:15:05.604534665 +0200
+--- libstdc++-v3/src/nonshared98/eh_alloc.cc.jj	2016-07-22 11:37:16.387402763 +0200
++++ libstdc++-v3/src/nonshared98/eh_alloc.cc	2016-07-22 11:37:16.387402763 +0200
 @@ -0,0 +1,178 @@
 +// -*- C++ -*- Allocate exception objects.
 +// Copyright (C) 2001-2016 Free Software Foundation, Inc.
@@ -1083,8 +1082,8 @@
 +asm (".hidden _ZTSN9__gnu_cxx26__concurrence_unlock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx24__concurrence_lock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx26__concurrence_unlock_errorE");
---- libstdc++-v3/src/nonshared98/int12848.S.jj	2016-07-21 19:15:05.605534653 +0200
-+++ libstdc++-v3/src/nonshared98/int12848.S	2016-07-21 19:15:05.605534653 +0200
+--- libstdc++-v3/src/nonshared98/int12848.S.jj	2016-07-22 11:37:16.387402763 +0200
++++ libstdc++-v3/src/nonshared98/int12848.S	2016-07-22 11:37:16.387402763 +0200
 @@ -0,0 +1,24 @@
 +/* Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +
@@ -1110,8 +1109,8 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX11_48
 +#include "int128.S"
---- libstdc++-v3/src/nonshared98/snprintf_lite-inst.cc.jj	2016-07-21 19:15:05.605534653 +0200
-+++ libstdc++-v3/src/nonshared98/snprintf_lite-inst.cc	2016-07-21 19:15:05.605534653 +0200
+--- libstdc++-v3/src/nonshared98/snprintf_lite-inst.cc.jj	2016-07-22 11:37:16.387402763 +0200
++++ libstdc++-v3/src/nonshared98/snprintf_lite-inst.cc	2016-07-22 11:37:16.387402763 +0200
 @@ -0,0 +1,41 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -1154,8 +1153,8 @@
 +#else
 +asm (".hidden _ZSt13__int_to_charIcmEiPT_T0_PKS0_St13_Ios_Fmtflagsb");
 +#endif
---- libstdc++-v3/src/nonshared98/messages_members.cc.jj	2016-07-21 19:15:05.605534653 +0200
-+++ libstdc++-v3/src/nonshared98/messages_members.cc	2016-07-21 19:15:05.605534653 +0200
+--- libstdc++-v3/src/nonshared98/messages_members.cc.jj	2016-07-22 11:37:16.388402751 +0200
++++ libstdc++-v3/src/nonshared98/messages_members.cc	2016-07-22 11:37:16.388402751 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -1181,8 +1180,8 @@
 +
 +#define _GLIBCXX_USE_CXX11_ABI 1
 +#include "../c++98/messages_members.cc"
---- libstdc++-v3/src/nonshared98/monetary_members.cc.jj	2016-07-21 19:15:05.605534653 +0200
-+++ libstdc++-v3/src/nonshared98/monetary_members.cc	2016-07-21 19:15:05.605534653 +0200
+--- libstdc++-v3/src/nonshared98/monetary_members.cc.jj	2016-07-22 11:37:16.388402751 +0200
++++ libstdc++-v3/src/nonshared98/monetary_members.cc	2016-07-22 11:37:16.388402751 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -1208,8 +1207,8 @@
 +
 +#define _GLIBCXX_USE_CXX11_ABI 1
 +#include "../c++98/monetary_members.cc"
---- libstdc++-v3/src/nonshared98/Makefile.am.jj	2016-07-21 19:15:05.606534641 +0200
-+++ libstdc++-v3/src/nonshared98/Makefile.am	2016-07-21 19:15:05.606534641 +0200
+--- libstdc++-v3/src/nonshared98/Makefile.am.jj	2016-07-22 11:37:16.388402751 +0200
++++ libstdc++-v3/src/nonshared98/Makefile.am	2016-07-22 11:37:16.388402751 +0200
 @@ -0,0 +1,155 @@
 +## Makefile for the C++03 sources of the GNU C++ Standard library.
 +##
@@ -1366,8 +1365,8 @@
 +	$(LTCXXCOMPILE) -I. -fimplicit-templates -c $<
 +c++locale.o: c++locale.cc
 +	$(CXXCOMPILE) -I. -fimplicit-templates -c $<
---- libstdc++-v3/src/nonshared98/Makefile.in.jj	2016-07-21 19:15:05.606534641 +0200
-+++ libstdc++-v3/src/nonshared98/Makefile.in	2016-07-21 19:15:05.606534641 +0200
+--- libstdc++-v3/src/nonshared98/Makefile.in.jj	2016-07-22 11:37:16.389402738 +0200
++++ libstdc++-v3/src/nonshared98/Makefile.in	2016-07-22 11:37:16.389402738 +0200
 @@ -0,0 +1,750 @@
 +# Makefile.in generated by automake 1.11.6 from Makefile.am.
 +# @configure_input@
@@ -2119,8 +2118,8 @@
 +# Tell versions [3.59,3.63) of GNU make to not export all variables.
 +# Otherwise a system limit (for SysV at least) may be exceeded.
 +.NOEXPORT:
---- libstdc++-v3/src/nonshared98/misc-inst.cc.jj	2016-07-21 19:15:05.607534629 +0200
-+++ libstdc++-v3/src/nonshared98/misc-inst.cc	2016-07-21 19:15:05.606534641 +0200
+--- libstdc++-v3/src/nonshared98/misc-inst.cc.jj	2016-07-22 11:37:16.389402738 +0200
++++ libstdc++-v3/src/nonshared98/misc-inst.cc	2016-07-22 11:37:16.389402738 +0200
 @@ -0,0 +1,25 @@
 +// Copyright (C) 1997-2016 Free Software Foundation, Inc.
 +//
@@ -2147,8 +2146,8 @@
 +#include "../c++98/misc-inst.cc"
 +asm (".hidden _ZNKSt5ctypeIcE8do_widenEc");
 +
---- libstdc++-v3/src/nonshared98/decimal-rtti.S.jj	2016-07-21 19:15:05.607534629 +0200
-+++ libstdc++-v3/src/nonshared98/decimal-rtti.S	2016-07-21 19:45:10.110701039 +0200
+--- libstdc++-v3/src/nonshared98/decimal-rtti.S.jj	2016-07-22 11:37:16.390402726 +0200
++++ libstdc++-v3/src/nonshared98/decimal-rtti.S	2016-07-22 11:37:16.390402726 +0200
 @@ -0,0 +1,274 @@
 +/* Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +
@@ -2424,8 +2423,8 @@
 +	STRING	"Df"
 +#endif
 +	.section	.note.GNU-stack,"",@progbits
---- libstdc++-v3/src/nonshared98/eh_alloc48.cc.jj	2016-07-21 19:15:05.607534629 +0200
-+++ libstdc++-v3/src/nonshared98/eh_alloc48.cc	2016-07-21 19:15:05.607534629 +0200
+--- libstdc++-v3/src/nonshared98/eh_alloc48.cc.jj	2016-07-22 11:37:16.390402726 +0200
++++ libstdc++-v3/src/nonshared98/eh_alloc48.cc	2016-07-22 11:37:16.390402726 +0200
 @@ -0,0 +1,36 @@
 +// -*- C++ -*- Allocate exception objects.
 +// Copyright (C) 2001-2016 Free Software Foundation, Inc.
@@ -2463,8 +2462,8 @@
 +  {
 +  }
 +}
---- libstdc++-v3/src/nonshared98/list.cc.jj	2016-07-21 19:15:05.607534629 +0200
-+++ libstdc++-v3/src/nonshared98/list.cc	2016-07-21 19:15:05.607534629 +0200
+--- libstdc++-v3/src/nonshared98/list.cc.jj	2016-07-22 11:37:16.390402726 +0200
++++ libstdc++-v3/src/nonshared98/list.cc	2016-07-22 11:37:16.390402726 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -2489,8 +2488,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++98/list.cc"
---- libstdc++-v3/src/nonshared98/stdexcept.cc.jj	2016-07-21 19:15:05.607534629 +0200
-+++ libstdc++-v3/src/nonshared98/stdexcept.cc	2016-07-21 19:15:05.607534629 +0200
+--- libstdc++-v3/src/nonshared98/stdexcept.cc.jj	2016-07-22 11:37:16.391402713 +0200
++++ libstdc++-v3/src/nonshared98/stdexcept.cc	2016-07-22 11:37:16.391402713 +0200
 @@ -0,0 +1,44 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -2536,8 +2535,8 @@
 +  BASE_DTOR (St15underflow_error)
 +  BASE_DTOR (St16invalid_argument)
 +}
---- libstdc++-v3/src/nonshared98/float128.S.jj	2016-07-21 19:15:05.608534616 +0200
-+++ libstdc++-v3/src/nonshared98/float128.S	2016-07-21 19:43:13.619115066 +0200
+--- libstdc++-v3/src/nonshared98/float128.S.jj	2016-07-22 11:37:16.391402713 +0200
++++ libstdc++-v3/src/nonshared98/float128.S	2016-07-22 11:37:16.391402713 +0200
 @@ -0,0 +1,162 @@
 +/* Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +
@@ -2701,8 +2700,8 @@
 +	STRING	"g"
 +#endif
 +	.section	.note.GNU-stack,"",@progbits
---- libstdc++-v3/src/nonshared98/locale-inst.cc.jj	2016-07-21 19:15:05.608534616 +0200
-+++ libstdc++-v3/src/nonshared98/locale-inst.cc	2016-07-21 19:15:05.608534616 +0200
+--- libstdc++-v3/src/nonshared98/locale-inst.cc.jj	2016-07-22 11:37:16.391402713 +0200
++++ libstdc++-v3/src/nonshared98/locale-inst.cc	2016-07-22 11:37:16.391402713 +0200
 @@ -0,0 +1,39 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -2743,8 +2742,8 @@
 +					   ios_base::iostate&) const;
 +
 +}
---- libstdc++-v3/src/nonshared98/istream-string.cc.jj	2016-07-21 19:15:05.608534616 +0200
-+++ libstdc++-v3/src/nonshared98/istream-string.cc	2016-07-21 19:15:05.608534616 +0200
+--- libstdc++-v3/src/nonshared98/istream-string.cc.jj	2016-07-22 11:37:16.391402713 +0200
++++ libstdc++-v3/src/nonshared98/istream-string.cc	2016-07-22 11:37:16.391402713 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -2769,8 +2768,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++98/istream-string.cc"
---- libstdc++-v3/src/nonshared98/streambuf-inst.cc.jj	2016-07-21 19:15:05.608534616 +0200
-+++ libstdc++-v3/src/nonshared98/streambuf-inst.cc	2016-07-21 19:15:05.608534616 +0200
+--- libstdc++-v3/src/nonshared98/streambuf-inst.cc.jj	2016-07-22 11:37:16.392402701 +0200
++++ libstdc++-v3/src/nonshared98/streambuf-inst.cc	2016-07-22 11:37:16.392402701 +0200
 @@ -0,0 +1,36 @@
 +// Copyright (C) 1997-2016 Free Software Foundation, Inc.
 +//
@@ -2808,8 +2807,8 @@
 +#endif
 +
 +}
---- libstdc++-v3/src/nonshared98/list_associated-2.cc.jj	2016-07-21 19:15:05.608534616 +0200
-+++ libstdc++-v3/src/nonshared98/list_associated-2.cc	2016-07-21 19:15:05.608534616 +0200
+--- libstdc++-v3/src/nonshared98/list_associated-2.cc.jj	2016-07-22 11:37:16.392402701 +0200
++++ libstdc++-v3/src/nonshared98/list_associated-2.cc	2016-07-22 11:37:16.392402701 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -2834,8 +2833,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++98/list_associated-2.cc"
---- libstdc++-v3/src/nonshared98/locale.cc.jj	2016-07-21 19:15:05.609534604 +0200
-+++ libstdc++-v3/src/nonshared98/locale.cc	2016-07-21 19:15:05.609534604 +0200
+--- libstdc++-v3/src/nonshared98/locale.cc.jj	2016-07-22 11:37:16.392402701 +0200
++++ libstdc++-v3/src/nonshared98/locale.cc	2016-07-22 11:37:16.392402701 +0200
 @@ -0,0 +1,84 @@
 +// Copyright (C) 1997-2016 Free Software Foundation, Inc.
 +//
@@ -2921,8 +2920,8 @@
 +} // namespace
 +
 +asm (".hidden _ZNSt6locale13_S_categoriesE");
---- libstdc++-v3/src/nonshared11/eh_aux_runtime.cc.jj	2016-07-21 19:15:05.609534604 +0200
-+++ libstdc++-v3/src/nonshared11/eh_aux_runtime.cc	2016-07-21 19:15:05.609534604 +0200
+--- libstdc++-v3/src/nonshared11/eh_aux_runtime.cc.jj	2016-07-22 11:37:16.392402701 +0200
++++ libstdc++-v3/src/nonshared11/eh_aux_runtime.cc	2016-07-22 11:37:16.392402701 +0200
 @@ -0,0 +1,38 @@
 +// -*- C++ -*- Common throw conditions.
 +// Copyright (C) 1994-2016 Free Software Foundation, Inc.
@@ -2962,8 +2961,8 @@
 +//extern "C" void
 +//__cxxabiv1::__cxa_throw_bad_array_length ()
 +//{ _GLIBCXX_THROW_OR_ABORT(std::bad_array_length()); }
---- libstdc++-v3/src/nonshared11/thread48.cc.jj	2016-07-21 19:15:05.609534604 +0200
-+++ libstdc++-v3/src/nonshared11/thread48.cc	2016-07-21 19:15:05.609534604 +0200
+--- libstdc++-v3/src/nonshared11/thread48.cc.jj	2016-07-22 11:37:16.393402688 +0200
++++ libstdc++-v3/src/nonshared11/thread48.cc	2016-07-22 11:37:16.393402688 +0200
 @@ -0,0 +1,28 @@
 +// Copyright (C) 2008-2016 Free Software Foundation, Inc.
 +//
@@ -2993,8 +2992,8 @@
 +asm (".hidden _ZNSt15_Sp_counted_ptrIDnLN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv");
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv");
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_releaseEv");
---- libstdc++-v3/src/nonshared11/cxx11-locale-inst.cc.jj	2016-07-21 19:15:05.609534604 +0200
-+++ libstdc++-v3/src/nonshared11/cxx11-locale-inst.cc	2016-07-21 19:15:05.609534604 +0200
+--- libstdc++-v3/src/nonshared11/cxx11-locale-inst.cc.jj	2016-07-22 11:37:16.393402688 +0200
++++ libstdc++-v3/src/nonshared11/cxx11-locale-inst.cc	2016-07-22 11:37:16.393402688 +0200
 @@ -0,0 +1,36 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -3032,8 +3031,8 @@
 +asm (".hidden _ZNKSt5ctypeIcE8do_widenEPKcS2_Pc");
 +asm (".hidden _ZNKSt5ctypeIcE8do_widenEc");
 +asm (".hidden _ZNKSt5ctypeIcE9do_narrowEcc");
---- libstdc++-v3/src/nonshared11/shared_ptr44.cc.jj	2016-07-21 19:15:05.610534592 +0200
-+++ libstdc++-v3/src/nonshared11/shared_ptr44.cc	2016-07-21 19:15:05.610534592 +0200
+--- libstdc++-v3/src/nonshared11/shared_ptr44.cc.jj	2016-07-22 11:37:16.393402688 +0200
++++ libstdc++-v3/src/nonshared11/shared_ptr44.cc	2016-07-22 11:37:16.393402688 +0200
 @@ -0,0 +1,43 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -3078,8 +3077,8 @@
 +asm (".hidden _ZTVN9__gnu_cxx24__concurrence_lock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx26__concurrence_unlock_errorE");
 +asm (".hidden _ZZNSt12_GLOBAL__N_19get_mutexEhE1m");
---- libstdc++-v3/src/nonshared11/functional.cc.jj	2016-07-21 19:15:05.610534592 +0200
-+++ libstdc++-v3/src/nonshared11/functional.cc	2016-07-21 19:15:05.610534592 +0200
+--- libstdc++-v3/src/nonshared11/functional.cc.jj	2016-07-22 11:37:16.393402688 +0200
++++ libstdc++-v3/src/nonshared11/functional.cc	2016-07-22 11:37:16.393402688 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -3105,8 +3104,8 @@
 +
 +#include "../c++11/functional.cc"
 +asm (".hidden _ZTSSt17bad_function_call");
---- libstdc++-v3/src/nonshared11/ostream-inst.cc.jj	2016-07-21 19:15:05.610534592 +0200
-+++ libstdc++-v3/src/nonshared11/ostream-inst.cc	2016-07-21 19:15:05.610534592 +0200
+--- libstdc++-v3/src/nonshared11/ostream-inst.cc.jj	2016-07-22 11:37:16.394402676 +0200
++++ libstdc++-v3/src/nonshared11/ostream-inst.cc	2016-07-22 11:37:16.394402676 +0200
 @@ -0,0 +1,48 @@
 +// Explicit instantiation file.
 +
@@ -3156,8 +3155,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/ios.cc.jj	2016-07-21 19:15:05.610534592 +0200
-+++ libstdc++-v3/src/nonshared11/ios.cc	2016-07-21 19:15:05.610534592 +0200
+--- libstdc++-v3/src/nonshared11/ios.cc.jj	2016-07-22 11:37:16.394402676 +0200
++++ libstdc++-v3/src/nonshared11/ios.cc	2016-07-22 11:37:16.394402676 +0200
 @@ -0,0 +1,30 @@
 +// Iostreams base classes -*- C++ -*-
 +
@@ -3189,8 +3188,8 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX11
 +#include "../c++11/ios.cc"
---- libstdc++-v3/src/nonshared11/cow-shim_facets.cc.jj	2016-07-21 19:15:05.611534580 +0200
-+++ libstdc++-v3/src/nonshared11/cow-shim_facets.cc	2016-07-21 19:15:05.611534580 +0200
+--- libstdc++-v3/src/nonshared11/cow-shim_facets.cc.jj	2016-07-22 11:37:16.394402676 +0200
++++ libstdc++-v3/src/nonshared11/cow-shim_facets.cc	2016-07-22 11:52:03.980619192 +0200
 @@ -0,0 +1,170 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -3351,7 +3350,7 @@
 +asm (".hidden _ZTVNSt13__facet_shims12_GLOBAL__N_115moneypunct_shimIwLb1EEE");
 +asm (".hidden _ZNSt13__facet_shims21__numpunct_fill_cacheIcEEvSt17integral_constantIbLb0EEPKNSt6locale5facetEPSt16__numpunct_cacheIT_E");
 +asm (".hidden _ZNSt13__facet_shims21__numpunct_fill_cacheIwEEvSt17integral_constantIbLb0EEPKNSt6locale5facetEPSt16__numpunct_cacheIT_E");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZNSt13__facet_shims14__messages_getIcEEvSt17integral_constantIbLb0EEPKNSt6locale5facetERNS_12__any_stringEiiiPKT_j");
 +asm (".hidden _ZNSt13__facet_shims14__messages_getIwEEvSt17integral_constantIbLb0EEPKNSt6locale5facetERNS_12__any_stringEiiiPKT_j");
 +asm (".hidden _ZNSt13__facet_shims15__messages_openIcEEiSt17integral_constantIbLb0EEPKNSt6locale5facetEPKcjRKS3_");
@@ -3362,8 +3361,8 @@
 +asm (".hidden _ZNSt13__facet_shims15__messages_openIcEEiSt17integral_constantIbLb0EEPKNSt6locale5facetEPKcmRKS3_");
 +asm (".hidden _ZNSt13__facet_shims15__messages_openIwEEiSt17integral_constantIbLb0EEPKNSt6locale5facetEPKcmRKS3_");
 +#endif
---- libstdc++-v3/src/nonshared11/del_ops.cc.jj	2016-07-21 19:15:05.611534580 +0200
-+++ libstdc++-v3/src/nonshared11/del_ops.cc	2016-07-21 19:15:05.611534580 +0200
+--- libstdc++-v3/src/nonshared11/del_ops.cc.jj	2016-07-22 11:37:16.395402663 +0200
++++ libstdc++-v3/src/nonshared11/del_ops.cc	2016-07-22 11:37:16.395402663 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2013-2016 Free Software Foundation, Inc.
 +//
@@ -3388,8 +3387,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/del_ops.cc"
---- libstdc++-v3/src/nonshared11/wlocale-inst.cc.jj	2016-07-21 19:15:05.611534580 +0200
-+++ libstdc++-v3/src/nonshared11/wlocale-inst.cc	2016-07-21 19:15:05.611534580 +0200
+--- libstdc++-v3/src/nonshared11/wlocale-inst.cc.jj	2016-07-22 11:37:16.395402663 +0200
++++ libstdc++-v3/src/nonshared11/wlocale-inst.cc	2016-07-22 11:37:16.395402663 +0200
 @@ -0,0 +1,36 @@
 +// Locale support -*- C++ -*-
 +
@@ -3427,8 +3426,8 @@
 +#define C wchar_t
 +#include "locale-inst.cc"
 +#endif
---- libstdc++-v3/src/nonshared11/wlocale-inst44.cc.jj	2016-07-21 19:15:05.611534580 +0200
-+++ libstdc++-v3/src/nonshared11/wlocale-inst44.cc	2016-07-21 19:15:05.611534580 +0200
+--- libstdc++-v3/src/nonshared11/wlocale-inst44.cc.jj	2016-07-22 11:37:16.395402663 +0200
++++ libstdc++-v3/src/nonshared11/wlocale-inst44.cc	2016-07-22 11:37:16.395402663 +0200
 @@ -0,0 +1,31 @@
 +// Copyright (C) 1999-2016 Free Software Foundation, Inc.
 +//
@@ -3461,8 +3460,8 @@
 +#define _GLIBCXX_NONSHARED_CXX11_44
 +#include "locale-inst.cc"
 +#endif
---- libstdc++-v3/src/nonshared11/condition_variable.cc.jj	2016-07-21 19:15:05.611534580 +0200
-+++ libstdc++-v3/src/nonshared11/condition_variable.cc	2016-07-21 19:15:05.611534580 +0200
+--- libstdc++-v3/src/nonshared11/condition_variable.cc.jj	2016-07-22 11:37:16.395402663 +0200
++++ libstdc++-v3/src/nonshared11/condition_variable.cc	2016-07-22 11:37:16.395402663 +0200
 @@ -0,0 +1,27 @@
 +// condition_variable -*- C++ -*-
 +
@@ -3491,8 +3490,8 @@
 +#define _GLIBCXX_NONSHARED_CXX11
 +#include "../c++11/condition_variable.cc"
 +asm (".hidden _ZSt16__at_thread_exitPSt20__at_thread_exit_elt");
---- libstdc++-v3/src/nonshared11/ctype.cc.jj	2016-07-21 19:15:05.612534568 +0200
-+++ libstdc++-v3/src/nonshared11/ctype.cc	2016-07-21 19:15:05.612534568 +0200
+--- libstdc++-v3/src/nonshared11/ctype.cc.jj	2016-07-22 11:37:16.396402651 +0200
++++ libstdc++-v3/src/nonshared11/ctype.cc	2016-07-22 11:37:16.396402651 +0200
 @@ -0,0 +1,35 @@
 +// Copyright (C) 1997-2016 Free Software Foundation, Inc.
 +//
@@ -3529,8 +3528,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/atexit_thread.cc.jj	2016-07-21 19:15:05.612534568 +0200
-+++ libstdc++-v3/src/nonshared11/atexit_thread.cc	2016-07-21 19:15:05.612534568 +0200
+--- libstdc++-v3/src/nonshared11/atexit_thread.cc.jj	2016-07-22 11:37:16.396402651 +0200
++++ libstdc++-v3/src/nonshared11/atexit_thread.cc	2016-07-22 11:37:16.396402651 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2013-2016 Free Software Foundation, Inc.
 +//
@@ -3555,8 +3554,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/atexit_thread.cc"
---- libstdc++-v3/src/nonshared11/future.cc.jj	2016-07-21 19:15:05.612534568 +0200
-+++ libstdc++-v3/src/nonshared11/future.cc	2016-07-21 19:15:05.612534568 +0200
+--- libstdc++-v3/src/nonshared11/future.cc.jj	2016-07-22 11:37:16.396402651 +0200
++++ libstdc++-v3/src/nonshared11/future.cc	2016-07-22 11:37:16.396402651 +0200
 @@ -0,0 +1,34 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -3592,8 +3591,8 @@
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_releaseEv");
 +asm (".hidden _ZSt16__at_thread_exitPSt20__at_thread_exit_elt");
 +asm (".hidden _ZNSt13__future_base13_State_baseV211_Make_ready6_S_runEPv");
---- libstdc++-v3/src/nonshared11/cow-string-inst.cc.jj	2016-07-21 19:15:05.612534568 +0200
-+++ libstdc++-v3/src/nonshared11/cow-string-inst.cc	2016-07-21 19:15:05.612534568 +0200
+--- libstdc++-v3/src/nonshared11/cow-string-inst.cc.jj	2016-07-22 11:37:16.396402651 +0200
++++ libstdc++-v3/src/nonshared11/cow-string-inst.cc	2016-07-22 11:37:16.396402651 +0200
 @@ -0,0 +1,101 @@
 +// Components for manipulating sequences of characters -*- C++ -*-
 +
@@ -3696,8 +3695,8 @@
 +  template
 +  void S::pop_back();
 +}
---- libstdc++-v3/src/nonshared11/system_error44.cc.jj	2016-07-21 19:15:05.612534568 +0200
-+++ libstdc++-v3/src/nonshared11/system_error44.cc	2016-07-21 19:15:05.612534568 +0200
+--- libstdc++-v3/src/nonshared11/system_error44.cc.jj	2016-07-22 11:37:16.397402638 +0200
++++ libstdc++-v3/src/nonshared11/system_error44.cc	2016-07-22 11:52:49.300071099 +0200
 @@ -0,0 +1,46 @@
 +// <system_error> implementation file
 +
@@ -3738,15 +3737,15 @@
 +asm (".hidden _ZNSt12__sso_stringaSEOS_");
 +asm (".hidden _ZNSt12__sso_stringaSERKS_");
 +asm (".hidden _ZTSNSt3_V214error_categoryE");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZNSt12__sso_stringC1EPKcj");
 +asm (".hidden _ZNSt12__sso_stringC2EPKcj");
 +#else
 +asm (".hidden _ZNSt12__sso_stringC1EPKcm");
 +asm (".hidden _ZNSt12__sso_stringC2EPKcm");
 +#endif
---- libstdc++-v3/src/nonshared11/compatibility-c++0x.cc.jj	2016-07-21 19:15:05.613534556 +0200
-+++ libstdc++-v3/src/nonshared11/compatibility-c++0x.cc	2016-07-21 19:15:05.613534556 +0200
+--- libstdc++-v3/src/nonshared11/compatibility-c++0x.cc.jj	2016-07-22 11:37:16.397402638 +0200
++++ libstdc++-v3/src/nonshared11/compatibility-c++0x.cc	2016-07-22 11:37:16.397402638 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -3772,8 +3771,8 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX11_44
 +#include "../c++11/compatibility-c++0x.cc"
---- libstdc++-v3/src/nonshared11/cxx11-shim_facets.cc.jj	2016-07-21 19:15:05.613534556 +0200
-+++ libstdc++-v3/src/nonshared11/cxx11-shim_facets.cc	2016-07-21 19:15:05.613534556 +0200
+--- libstdc++-v3/src/nonshared11/cxx11-shim_facets.cc.jj	2016-07-22 11:37:16.397402638 +0200
++++ libstdc++-v3/src/nonshared11/cxx11-shim_facets.cc	2016-07-22 11:53:24.065650644 +0200
 @@ -0,0 +1,170 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -3934,7 +3933,7 @@
 +asm (".hidden _ZTVNSt13__facet_shims12_GLOBAL__N_115moneypunct_shimIcLb1EEE");
 +asm (".hidden _ZTVNSt13__facet_shims12_GLOBAL__N_115moneypunct_shimIwLb0EEE");
 +asm (".hidden _ZTVNSt13__facet_shims12_GLOBAL__N_115moneypunct_shimIwLb1EEE");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZNSt13__facet_shims14__messages_getIcEEvSt17integral_constantIbLb1EEPKNSt6locale5facetERNS_12__any_stringEiiiPKT_j");
 +asm (".hidden _ZNSt13__facet_shims14__messages_getIwEEvSt17integral_constantIbLb1EEPKNSt6locale5facetERNS_12__any_stringEiiiPKT_j");
 +asm (".hidden _ZNSt13__facet_shims15__messages_openIcEEiSt17integral_constantIbLb1EEPKNSt6locale5facetEPKcjRKS3_");
@@ -3945,8 +3944,8 @@
 +asm (".hidden _ZNSt13__facet_shims15__messages_openIcEEiSt17integral_constantIbLb1EEPKNSt6locale5facetEPKcmRKS3_");
 +asm (".hidden _ZNSt13__facet_shims15__messages_openIwEEiSt17integral_constantIbLb1EEPKNSt6locale5facetEPKcmRKS3_");
 +#endif
---- libstdc++-v3/src/nonshared11/thread44.cc.jj	2016-07-21 19:15:05.613534556 +0200
-+++ libstdc++-v3/src/nonshared11/thread44.cc	2016-07-21 19:15:05.613534556 +0200
+--- libstdc++-v3/src/nonshared11/thread44.cc.jj	2016-07-22 11:37:16.398402626 +0200
++++ libstdc++-v3/src/nonshared11/thread44.cc	2016-07-22 11:37:16.398402626 +0200
 @@ -0,0 +1,27 @@
 +// Copyright (C) 2008-2016 Free Software Foundation, Inc.
 +//
@@ -3975,8 +3974,8 @@
 +asm (".hidden _ZNSt15_Sp_counted_ptrIDnLN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv");
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv");
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_releaseEv");
---- libstdc++-v3/src/nonshared11/random48.cc.jj	2016-07-21 19:15:05.614534543 +0200
-+++ libstdc++-v3/src/nonshared11/random48.cc	2016-07-21 19:15:05.614534543 +0200
+--- libstdc++-v3/src/nonshared11/random48.cc.jj	2016-07-22 11:37:16.398402626 +0200
++++ libstdc++-v3/src/nonshared11/random48.cc	2016-07-22 11:37:16.398402626 +0200
 @@ -0,0 +1,72 @@
 +// Copyright (C) 2013-2016 Free Software Foundation, Inc.
 +//
@@ -4050,8 +4049,8 @@
 +asm (".hidden _ZNSt23mersenne_twister_engineIjLj32ELj624ELj397ELj31ELj2567483615ELj11ELj4294967295ELj7ELj2636928640ELj15ELj4022730752ELj18ELj1812433253EEC2Ej");
 +asm (".hidden _ZNSt23mersenne_twister_engineIjLj32ELj624ELj397ELj31ELj2567483615ELj11ELj4294967295ELj7ELj2636928640ELj15ELj4022730752ELj18ELj1812433253EEclEv");
 +#endif
---- libstdc++-v3/src/nonshared11/placeholders.cc.jj	2016-07-21 19:15:05.614534543 +0200
-+++ libstdc++-v3/src/nonshared11/placeholders.cc	2016-07-21 19:15:05.614534543 +0200
+--- libstdc++-v3/src/nonshared11/placeholders.cc.jj	2016-07-22 11:37:16.398402626 +0200
++++ libstdc++-v3/src/nonshared11/placeholders.cc	2016-07-22 11:37:16.398402626 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4076,8 +4075,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++11/placeholders.cc"
---- libstdc++-v3/src/nonshared11/iostream-inst.cc.jj	2016-07-21 19:15:05.614534543 +0200
-+++ libstdc++-v3/src/nonshared11/iostream-inst.cc	2016-07-21 19:15:05.614534543 +0200
+--- libstdc++-v3/src/nonshared11/iostream-inst.cc.jj	2016-07-22 11:37:16.399402613 +0200
++++ libstdc++-v3/src/nonshared11/iostream-inst.cc	2016-07-22 11:37:16.398402626 +0200
 @@ -0,0 +1,46 @@
 +// Explicit instantiation file.
 +
@@ -4125,8 +4124,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/debug.cc.jj	2016-07-21 19:15:05.614534543 +0200
-+++ libstdc++-v3/src/nonshared11/debug.cc	2016-07-21 19:15:05.614534543 +0200
+--- libstdc++-v3/src/nonshared11/debug.cc.jj	2016-07-22 11:37:16.399402613 +0200
++++ libstdc++-v3/src/nonshared11/debug.cc	2016-07-22 11:37:16.399402613 +0200
 @@ -0,0 +1,234 @@
 +// Copyright (C) 2003-2016 Free Software Foundation, Inc.
 +//
@@ -4362,8 +4361,8 @@
 +asm (".hidden _ZN11__gnu_debug30_Safe_unordered_container_base22_M_attach_local_singleEPNS_19_Safe_iterator_baseEb");
 +asm (".hidden _ZN11__gnu_debug30_Safe_unordered_container_base22_M_detach_local_singleEPNS_19_Safe_iterator_baseE");
 +asm (".hidden _ZNK11__gnu_debug25_Safe_local_iterator_base16_M_get_containerEv");
---- libstdc++-v3/src/nonshared11/hashtable_c++0x.cc.jj	2016-07-21 19:15:05.614534543 +0200
-+++ libstdc++-v3/src/nonshared11/hashtable_c++0x.cc	2016-07-21 19:15:05.614534543 +0200
+--- libstdc++-v3/src/nonshared11/hashtable_c++0x.cc.jj	2016-07-22 11:37:16.399402613 +0200
++++ libstdc++-v3/src/nonshared11/hashtable_c++0x.cc	2016-07-22 11:37:16.399402613 +0200
 @@ -0,0 +1,40 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4405,8 +4404,8 @@
 +
 +#define HASHTABLE_AUX_CC 1
 +#include "../c++11/hashtable_c++0x.cc"
---- libstdc++-v3/src/nonshared11/futex.cc.jj	2016-07-21 19:15:05.615534531 +0200
-+++ libstdc++-v3/src/nonshared11/futex.cc	2016-07-21 19:15:05.615534531 +0200
+--- libstdc++-v3/src/nonshared11/futex.cc.jj	2016-07-22 11:37:16.399402613 +0200
++++ libstdc++-v3/src/nonshared11/futex.cc	2016-07-22 11:37:16.399402613 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4431,8 +4430,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++11/futex.cc"
---- libstdc++-v3/src/nonshared11/cxx11-stdexcept.cc.jj	2016-07-21 19:15:05.615534531 +0200
-+++ libstdc++-v3/src/nonshared11/cxx11-stdexcept.cc	2016-07-21 19:15:05.615534531 +0200
+--- libstdc++-v3/src/nonshared11/cxx11-stdexcept.cc.jj	2016-07-22 11:37:16.400402601 +0200
++++ libstdc++-v3/src/nonshared11/cxx11-stdexcept.cc	2016-07-22 11:37:16.400402601 +0200
 @@ -0,0 +1,25 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4459,8 +4458,8 @@
 +#include "../c++11/cxx11-stdexcept.cc"
 +asm (".hidden _ZNSt12__cow_stringC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE");
 +asm (".hidden _ZNSt12__cow_stringC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE");
---- libstdc++-v3/src/nonshared11/locale-inst44.cc.jj	2016-07-21 19:15:05.615534531 +0200
-+++ libstdc++-v3/src/nonshared11/locale-inst44.cc	2016-07-21 19:15:05.615534531 +0200
+--- libstdc++-v3/src/nonshared11/locale-inst44.cc.jj	2016-07-22 11:37:16.400402601 +0200
++++ libstdc++-v3/src/nonshared11/locale-inst44.cc	2016-07-22 11:37:16.400402601 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 1999-2016 Free Software Foundation, Inc.
 +//
@@ -4486,8 +4485,8 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX11_44
 +#include "locale-inst.cc"
---- libstdc++-v3/src/nonshared11/random.cc.jj	2016-07-21 19:15:05.615534531 +0200
-+++ libstdc++-v3/src/nonshared11/random.cc	2016-07-21 19:15:05.615534531 +0200
+--- libstdc++-v3/src/nonshared11/random.cc.jj	2016-07-22 11:37:16.400402601 +0200
++++ libstdc++-v3/src/nonshared11/random.cc	2016-07-22 11:37:16.400402601 +0200
 @@ -0,0 +1,71 @@
 +// Copyright (C) 2013-2016 Free Software Foundation, Inc.
 +//
@@ -4560,8 +4559,8 @@
 +asm (".hidden _ZNSt23mersenne_twister_engineIjLj32ELj624ELj397ELj31ELj2567483615ELj11ELj4294967295ELj7ELj2636928640ELj15ELj4022730752ELj18ELj1812433253EEC2Ej");
 +asm (".hidden _ZNSt23mersenne_twister_engineIjLj32ELj624ELj397ELj31ELj2567483615ELj11ELj4294967295ELj7ELj2636928640ELj15ELj4022730752ELj18ELj1812433253EEclEv");
 +#endif
---- libstdc++-v3/src/nonshared11/shared_ptr48.cc.jj	2016-07-21 19:15:05.616534519 +0200
-+++ libstdc++-v3/src/nonshared11/shared_ptr48.cc	2016-07-21 19:15:05.616534519 +0200
+--- libstdc++-v3/src/nonshared11/shared_ptr48.cc.jj	2016-07-22 11:37:16.400402601 +0200
++++ libstdc++-v3/src/nonshared11/shared_ptr48.cc	2016-07-22 11:37:16.400402601 +0200
 @@ -0,0 +1,43 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4606,8 +4605,8 @@
 +asm (".hidden _ZTVN9__gnu_cxx24__concurrence_lock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx26__concurrence_unlock_errorE");
 +asm (".hidden _ZZNSt12_GLOBAL__N_19get_mutexEhE1m");
---- libstdc++-v3/src/nonshared11/functexcept48.cc.jj	2016-07-21 19:15:05.616534519 +0200
-+++ libstdc++-v3/src/nonshared11/functexcept48.cc	2016-07-21 19:15:05.616534519 +0200
+--- libstdc++-v3/src/nonshared11/functexcept48.cc.jj	2016-07-22 11:37:16.401402588 +0200
++++ libstdc++-v3/src/nonshared11/functexcept48.cc	2016-07-22 11:37:16.401402588 +0200
 @@ -0,0 +1,66 @@
 +// Copyright (C) 2001-2016 Free Software Foundation, Inc.
 +//
@@ -4675,8 +4674,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/compatibility-atomic-c++0x.cc.jj	2016-07-21 19:15:05.616534519 +0200
-+++ libstdc++-v3/src/nonshared11/compatibility-atomic-c++0x.cc	2016-07-21 19:15:05.616534519 +0200
+--- libstdc++-v3/src/nonshared11/compatibility-atomic-c++0x.cc.jj	2016-07-22 11:37:16.401402588 +0200
++++ libstdc++-v3/src/nonshared11/compatibility-atomic-c++0x.cc	2016-07-22 11:37:16.401402588 +0200
 @@ -0,0 +1,42 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4720,8 +4719,8 @@
 +    _ZNVSt9__atomic011atomic_flag12test_and_setESt12memory_order (m);
 +  }
 +}
---- libstdc++-v3/src/nonshared11/cow-wstring-inst.cc.jj	2016-07-21 19:15:05.616534519 +0200
-+++ libstdc++-v3/src/nonshared11/cow-wstring-inst.cc	2016-07-21 19:15:05.616534519 +0200
+--- libstdc++-v3/src/nonshared11/cow-wstring-inst.cc.jj	2016-07-22 11:37:16.401402588 +0200
++++ libstdc++-v3/src/nonshared11/cow-wstring-inst.cc	2016-07-22 11:37:16.401402588 +0200
 @@ -0,0 +1,35 @@
 +// wide string support -*- C++ -*-
 +
@@ -4758,8 +4757,8 @@
 +#define C wchar_t
 +#include "cow-string-inst.cc"
 +#endif
---- libstdc++-v3/src/nonshared11/sstream-inst.cc.jj	2016-07-21 19:15:05.616534519 +0200
-+++ libstdc++-v3/src/nonshared11/sstream-inst.cc	2016-07-21 19:15:05.616534519 +0200
+--- libstdc++-v3/src/nonshared11/sstream-inst.cc.jj	2016-07-22 11:37:16.401402588 +0200
++++ libstdc++-v3/src/nonshared11/sstream-inst.cc	2016-07-22 11:37:16.401402588 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4784,8 +4783,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++11/sstream-inst.cc"
---- libstdc++-v3/src/nonshared11/istream-inst.cc.jj	2016-07-21 19:15:05.617534507 +0200
-+++ libstdc++-v3/src/nonshared11/istream-inst.cc	2016-07-21 19:15:05.617534507 +0200
+--- libstdc++-v3/src/nonshared11/istream-inst.cc.jj	2016-07-22 11:37:16.402402576 +0200
++++ libstdc++-v3/src/nonshared11/istream-inst.cc	2016-07-22 11:37:16.402402576 +0200
 @@ -0,0 +1,46 @@
 +// Explicit instantiation file.
 +
@@ -4833,8 +4832,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/del_opvnt.cc.jj	2016-07-21 19:15:05.617534507 +0200
-+++ libstdc++-v3/src/nonshared11/del_opvnt.cc	2016-07-21 19:15:05.617534507 +0200
+--- libstdc++-v3/src/nonshared11/del_opvnt.cc.jj	2016-07-22 11:37:16.402402576 +0200
++++ libstdc++-v3/src/nonshared11/del_opvnt.cc	2016-07-22 11:37:16.402402576 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2013-2016 Free Software Foundation, Inc.
 +//
@@ -4859,8 +4858,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/del_opvnt.cc"
---- libstdc++-v3/src/nonshared11/cxx11-ios_failure.cc.jj	2016-07-21 19:15:05.617534507 +0200
-+++ libstdc++-v3/src/nonshared11/cxx11-ios_failure.cc	2016-07-21 19:15:05.617534507 +0200
+--- libstdc++-v3/src/nonshared11/cxx11-ios_failure.cc.jj	2016-07-22 11:37:16.402402576 +0200
++++ libstdc++-v3/src/nonshared11/cxx11-ios_failure.cc	2016-07-22 11:37:16.402402576 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4885,8 +4884,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++11/cxx11-ios_failure.cc"
---- libstdc++-v3/src/nonshared11/cow-stdexcept.cc.jj	2016-07-21 19:15:05.617534507 +0200
-+++ libstdc++-v3/src/nonshared11/cow-stdexcept.cc	2016-07-21 19:15:05.617534507 +0200
+--- libstdc++-v3/src/nonshared11/cow-stdexcept.cc.jj	2016-07-22 11:37:16.402402576 +0200
++++ libstdc++-v3/src/nonshared11/cow-stdexcept.cc	2016-07-22 11:54:30.872842678 +0200
 @@ -0,0 +1,51 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4925,7 +4924,7 @@
 +asm (".hidden _ZNSt12__cow_stringaSERKS_");
 +asm (".hidden _ZNSt12__sso_stringC1ERKSs");
 +asm (".hidden _ZNSt12__sso_stringC2ERKSs");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZNSt12__cow_stringC1EPKcj");
 +asm (".hidden _ZNSt12__cow_stringC2EPKcj");
 +#else
@@ -4939,8 +4938,8 @@
 +asm (".hidden _Z27_txnal_cow_string_D1_commitPv");
 +asm (".hidden _Z28_txnal_runtime_error_get_msgPv");
 +asm (".hidden _Z35_txnal_cow_string_C1_for_exceptionsPvPKcS_");
---- libstdc++-v3/src/nonshared11/chrono.cc.jj	2016-07-21 19:15:05.617534507 +0200
-+++ libstdc++-v3/src/nonshared11/chrono.cc	2016-07-21 19:15:05.617534507 +0200
+--- libstdc++-v3/src/nonshared11/chrono.cc.jj	2016-07-22 11:37:16.403402563 +0200
++++ libstdc++-v3/src/nonshared11/chrono.cc	2016-07-22 11:37:16.403402563 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -4965,8 +4964,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++11/chrono.cc"
---- libstdc++-v3/src/nonshared11/functexcept.cc.jj	2016-07-21 19:15:05.618534495 +0200
-+++ libstdc++-v3/src/nonshared11/functexcept.cc	2016-07-21 19:15:05.618534495 +0200
+--- libstdc++-v3/src/nonshared11/functexcept.cc.jj	2016-07-22 11:37:16.403402563 +0200
++++ libstdc++-v3/src/nonshared11/functexcept.cc	2016-07-22 11:37:16.403402563 +0200
 @@ -0,0 +1,85 @@
 +// Copyright (C) 2001-2016 Free Software Foundation, Inc.
 +//
@@ -5053,8 +5052,8 @@
 +} // namespace
 +asm (".hidden _ZNSt12future_errorC1ESt10error_code");
 +asm (".hidden _ZNSt12future_errorC2ESt10error_code");
---- libstdc++-v3/src/nonshared11/cxx11-hash_tr1.cc.jj	2016-07-21 19:15:05.618534495 +0200
-+++ libstdc++-v3/src/nonshared11/cxx11-hash_tr1.cc	2016-07-21 19:15:05.618534495 +0200
+--- libstdc++-v3/src/nonshared11/cxx11-hash_tr1.cc.jj	2016-07-22 11:37:16.403402563 +0200
++++ libstdc++-v3/src/nonshared11/cxx11-hash_tr1.cc	2016-07-22 11:37:16.403402563 +0200
 @@ -0,0 +1,25 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -5081,8 +5080,8 @@
 +#include "../c++11/cxx11-hash_tr1.cc"
 +asm (".hidden _ZNKSt3tr14hashIRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEclES8_");
 +asm (".hidden _ZNKSt3tr14hashIRKNSt7__cxx1112basic_stringIwSt11char_traitsIwESaIwEEEEclES8_");
---- libstdc++-v3/src/nonshared11/cxx11-wlocale-inst.cc.jj	2016-07-21 19:15:05.618534495 +0200
-+++ libstdc++-v3/src/nonshared11/cxx11-wlocale-inst.cc	2016-07-21 19:15:05.618534495 +0200
+--- libstdc++-v3/src/nonshared11/cxx11-wlocale-inst.cc.jj	2016-07-22 11:37:16.403402563 +0200
++++ libstdc++-v3/src/nonshared11/cxx11-wlocale-inst.cc	2016-07-22 11:54:57.649518841 +0200
 @@ -0,0 +1,39 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -5115,7 +5114,7 @@
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11ItEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IxEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IyEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZNSt15time_put_bynameIwSt19ostreambuf_iteratorIwSt11char_traitsIwEEEC1ERKNSt7__cxx1112basic_stringIcS1_IcESaIcEEEj");
 +asm (".hidden _ZNSt15time_put_bynameIwSt19ostreambuf_iteratorIwSt11char_traitsIwEEEC2ERKNSt7__cxx1112basic_stringIcS1_IcESaIcEEEj");
 +#else
@@ -5123,8 +5122,8 @@
 +asm (".hidden _ZNSt15time_put_bynameIwSt19ostreambuf_iteratorIwSt11char_traitsIwEEEC2ERKNSt7__cxx1112basic_stringIcS1_IcESaIcEEEm");
 +#endif
 +asm (".hidden _ZNKSt19istreambuf_iteratorIwSt11char_traitsIwEE5equalERKS2_");
---- libstdc++-v3/src/nonshared11/system_error48.cc.jj	2016-07-21 19:15:05.618534495 +0200
-+++ libstdc++-v3/src/nonshared11/system_error48.cc	2016-07-21 19:15:05.618534495 +0200
+--- libstdc++-v3/src/nonshared11/system_error48.cc.jj	2016-07-22 11:37:16.404402551 +0200
++++ libstdc++-v3/src/nonshared11/system_error48.cc	2016-07-22 11:52:58.808956098 +0200
 @@ -0,0 +1,46 @@
 +// <system_error> implementation file
 +
@@ -5165,15 +5164,15 @@
 +asm (".hidden _ZNSt12__sso_stringaSEOS_");
 +asm (".hidden _ZNSt12__sso_stringaSERKS_");
 +asm (".hidden _ZTSNSt3_V214error_categoryE");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZNSt12__sso_stringC1EPKcj");
 +asm (".hidden _ZNSt12__sso_stringC2EPKcj");  
 +#else
 +asm (".hidden _ZNSt12__sso_stringC1EPKcm");
 +asm (".hidden _ZNSt12__sso_stringC2EPKcm");
 +#endif
---- libstdc++-v3/src/nonshared11/ext11-inst.cc.jj	2016-07-21 19:15:05.618534495 +0200
-+++ libstdc++-v3/src/nonshared11/ext11-inst.cc	2016-07-21 19:15:05.618534495 +0200
+--- libstdc++-v3/src/nonshared11/ext11-inst.cc.jj	2016-07-22 11:37:16.404402551 +0200
++++ libstdc++-v3/src/nonshared11/ext11-inst.cc	2016-07-22 11:37:16.404402551 +0200
 @@ -0,0 +1,38 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -5213,8 +5212,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/locale-inst-asm.S.jj	2016-07-21 19:15:05.619534482 +0200
-+++ libstdc++-v3/src/nonshared11/locale-inst-asm.S	2016-07-21 19:47:02.597335626 +0200
+--- libstdc++-v3/src/nonshared11/locale-inst-asm.S.jj	2016-07-22 11:37:16.404402551 +0200
++++ libstdc++-v3/src/nonshared11/locale-inst-asm.S	2016-07-22 11:37:16.404402551 +0200
 @@ -0,0 +1,291 @@
 +/* Copyright (C) 2015-2016 Free Software Foundation, Inc.
 +
@@ -5507,8 +5506,8 @@
 +	VPTR(_ZNSt16__numpunct_cacheIwED1Ev)
 +	VPTR(_ZNSt16__numpunct_cacheIwED0Ev)
 +	.section	.note.GNU-stack,"",@progbits
---- libstdc++-v3/src/nonshared11/del_opvs.cc.jj	2016-07-21 19:15:05.619534482 +0200
-+++ libstdc++-v3/src/nonshared11/del_opvs.cc	2016-07-21 19:15:05.619534482 +0200
+--- libstdc++-v3/src/nonshared11/del_opvs.cc.jj	2016-07-22 11:37:16.404402551 +0200
++++ libstdc++-v3/src/nonshared11/del_opvs.cc	2016-07-22 11:37:16.404402551 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2013-2016 Free Software Foundation, Inc.
 +//
@@ -5533,8 +5532,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/del_opvs.cc"
---- libstdc++-v3/src/nonshared11/cow-sstream-inst.cc.jj	2016-07-21 19:15:05.619534482 +0200
-+++ libstdc++-v3/src/nonshared11/cow-sstream-inst.cc	2016-07-21 19:15:05.619534482 +0200
+--- libstdc++-v3/src/nonshared11/cow-sstream-inst.cc.jj	2016-07-22 11:37:16.405402538 +0200
++++ libstdc++-v3/src/nonshared11/cow-sstream-inst.cc	2016-07-22 11:37:16.405402538 +0200
 @@ -0,0 +1,78 @@
 +// Explicit instantiation file.
 +
@@ -5614,8 +5613,8 @@
 +asm (".hidden _ZNSt15basic_stringbufIwSt11char_traitsIwESaIwEED0Ev");
 +asm (".hidden _ZNSt15basic_stringbufIwSt11char_traitsIwESaIwEED1Ev");
 +asm (".hidden _ZNSt15basic_stringbufIwSt11char_traitsIwESaIwEED2Ev");
---- libstdc++-v3/src/nonshared11/new_handler.cc.jj	2016-07-21 19:15:05.619534482 +0200
-+++ libstdc++-v3/src/nonshared11/new_handler.cc	2016-07-21 19:15:05.619534482 +0200
+--- libstdc++-v3/src/nonshared11/new_handler.cc.jj	2016-07-22 11:37:16.405402538 +0200
++++ libstdc++-v3/src/nonshared11/new_handler.cc	2016-07-22 11:37:16.405402538 +0200
 @@ -0,0 +1,72 @@
 +// Implementation file for the -*- C++ -*- dynamic memory management header.
 +
@@ -5689,8 +5688,8 @@
 +asm (".hidden _ZTSN9__gnu_cxx26__concurrence_unlock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx24__concurrence_lock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx26__concurrence_unlock_errorE");
---- libstdc++-v3/src/nonshared11/codecvt.cc.jj	2016-07-21 19:15:05.620534470 +0200
-+++ libstdc++-v3/src/nonshared11/codecvt.cc	2016-07-21 19:15:05.620534470 +0200
+--- libstdc++-v3/src/nonshared11/codecvt.cc.jj	2016-07-22 11:37:16.405402538 +0200
++++ libstdc++-v3/src/nonshared11/codecvt.cc	2016-07-22 11:37:16.405402538 +0200
 @@ -0,0 +1,31 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -5723,8 +5722,8 @@
 +asm (".hidden _ZTSSt23__codecvt_abstract_baseIDsc11__mbstate_tE");
 +asm (".hidden _ZTVSt23__codecvt_abstract_baseIDic11__mbstate_tE");
 +asm (".hidden _ZTVSt23__codecvt_abstract_baseIDsc11__mbstate_tE");
---- libstdc++-v3/src/nonshared11/regex48.cc.jj	2016-07-21 19:15:05.620534470 +0200
-+++ libstdc++-v3/src/nonshared11/regex48.cc	2016-07-21 19:15:05.620534470 +0200
+--- libstdc++-v3/src/nonshared11/regex48.cc.jj	2016-07-22 11:37:16.405402538 +0200
++++ libstdc++-v3/src/nonshared11/regex48.cc	2016-07-22 11:37:16.405402538 +0200
 @@ -0,0 +1,30 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -5756,8 +5755,8 @@
 +asm (".hidden _ZTSSt11regex_error");
 +asm (".hidden _ZTISt11regex_error");
 +asm (".hidden _ZTVSt11regex_error");
---- libstdc++-v3/src/nonshared11/eh_terminate.cc.jj	2016-07-21 19:15:05.620534470 +0200
-+++ libstdc++-v3/src/nonshared11/eh_terminate.cc	2016-07-21 19:15:05.620534470 +0200
+--- libstdc++-v3/src/nonshared11/eh_terminate.cc.jj	2016-07-22 11:37:16.406402526 +0200
++++ libstdc++-v3/src/nonshared11/eh_terminate.cc	2016-07-22 11:37:16.406402526 +0200
 @@ -0,0 +1,92 @@
 +// Implementation file for the -*- C++ -*- dynamic memory management header.
 +
@@ -5851,9 +5850,9 @@
 +asm (".hidden _ZTSN9__gnu_cxx26__concurrence_unlock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx24__concurrence_lock_errorE");
 +asm (".hidden _ZTVN9__gnu_cxx26__concurrence_unlock_errorE");
---- libstdc++-v3/src/nonshared11/snprintf_lite.cc.jj	2016-07-21 19:15:05.620534470 +0200
-+++ libstdc++-v3/src/nonshared11/snprintf_lite.cc	2016-07-21 19:15:05.620534470 +0200
-@@ -0,0 +1,31 @@
+--- libstdc++-v3/src/nonshared11/snprintf_lite.cc.jj	2016-07-22 11:37:16.406402526 +0200
++++ libstdc++-v3/src/nonshared11/snprintf_lite.cc	2016-07-22 11:42:07.802829363 +0200
+@@ -0,0 +1,37 @@
 +// Copyright (C) 2014-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -5877,16 +5876,22 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++11/snprintf_lite.cc"
-+#ifdef __i386__
++#ifdef __powerpc64__
++asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcmm");
++asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcmPKcS0_");
++#elif defined(__i386__) || defined(__powerpc__)
 +asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcjj");
 +asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcjPKcS0_");
++#elif defined(__aarch64__)
++asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcmm");
++asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcmPKcSt9__va_list");
 +#else
 +asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcmm");
 +asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcmPKcP13__va_list_tag");
 +#endif
 +asm (".hidden _ZN9__gnu_cxx26__throw_insufficient_spaceEPKcS1_");
---- libstdc++-v3/src/nonshared11/string-inst.cc.jj	2016-07-21 19:15:05.620534470 +0200
-+++ libstdc++-v3/src/nonshared11/string-inst.cc	2016-07-21 19:15:05.620534470 +0200
+--- libstdc++-v3/src/nonshared11/string-inst.cc.jj	2016-07-22 11:37:16.406402526 +0200
++++ libstdc++-v3/src/nonshared11/string-inst.cc	2016-07-22 11:37:16.406402526 +0200
 @@ -0,0 +1,34 @@
 +// Components for manipulating sequences of characters -*- C++ -*-
 +
@@ -5922,8 +5927,8 @@
 +#include "../c++11/string-inst.cc"
 +asm (".hidden _ZN9__gnu_cxxeqIPKcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEbRKNS_17__normal_iteratorIT_T0_EESE_");
 +asm (".hidden _ZN9__gnu_cxxeqIPcNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEbRKNS_17__normal_iteratorIT_T0_EESD_");
---- libstdc++-v3/src/nonshared11/Makefile.am.jj	2016-07-21 19:15:05.621534458 +0200
-+++ libstdc++-v3/src/nonshared11/Makefile.am	2016-07-21 19:15:05.621534458 +0200
+--- libstdc++-v3/src/nonshared11/Makefile.am.jj	2016-07-22 11:37:16.407402513 +0200
++++ libstdc++-v3/src/nonshared11/Makefile.am	2016-07-22 11:37:16.407402513 +0200
 @@ -0,0 +1,179 @@
 +## Makefile for the C++03 sources of the GNU C++ Standard library.
 +##
@@ -6104,8 +6109,8 @@
 +	$(LTCXXCOMPILE) -std=gnu++14 -Wno-sized-deallocation -c $<
 +del_opvs.lo: del_opvs.cc
 +	$(LTCXXCOMPILE) -std=gnu++14 -Wno-sized-deallocation -c $<
---- libstdc++-v3/src/nonshared11/Makefile.in.jj	2016-07-21 19:15:05.621534458 +0200
-+++ libstdc++-v3/src/nonshared11/Makefile.in	2016-07-21 19:15:05.621534458 +0200
+--- libstdc++-v3/src/nonshared11/Makefile.in.jj	2016-07-22 11:37:16.407402513 +0200
++++ libstdc++-v3/src/nonshared11/Makefile.in	2016-07-22 11:37:16.407402513 +0200
 @@ -0,0 +1,788 @@
 +# Makefile.in generated by automake 1.11.6 from Makefile.am.
 +# @configure_input@
@@ -6895,8 +6900,8 @@
 +# Tell versions [3.59,3.63) of GNU make to not export all variables.
 +# Otherwise a system limit (for SysV at least) may be exceeded.
 +.NOEXPORT:
---- libstdc++-v3/src/nonshared11/del_opv.cc.jj	2016-07-21 19:15:05.622534446 +0200
-+++ libstdc++-v3/src/nonshared11/del_opv.cc	2016-07-21 19:15:05.622534446 +0200
+--- libstdc++-v3/src/nonshared11/del_opv.cc.jj	2016-07-22 11:37:16.408402501 +0200
++++ libstdc++-v3/src/nonshared11/del_opv.cc	2016-07-22 11:37:16.408402501 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2013-2016 Free Software Foundation, Inc.
 +//
@@ -6921,8 +6926,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/del_opv.cc"
---- libstdc++-v3/src/nonshared11/limits.cc.jj	2016-07-21 19:15:05.622534446 +0200
-+++ libstdc++-v3/src/nonshared11/limits.cc	2016-07-21 19:15:05.622534446 +0200
+--- libstdc++-v3/src/nonshared11/limits.cc.jj	2016-07-22 11:37:16.408402501 +0200
++++ libstdc++-v3/src/nonshared11/limits.cc	2016-07-22 11:37:16.408402501 +0200
 @@ -0,0 +1,99 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -7023,8 +7028,8 @@
 +  const float_round_style numeric_limits<unsigned __int128>::round_style;
 +#endif
 +}
---- libstdc++-v3/src/nonshared11/locale-inst.cc.jj	2016-07-21 19:15:05.622534446 +0200
-+++ libstdc++-v3/src/nonshared11/locale-inst.cc	2016-07-21 19:15:05.622534446 +0200
+--- libstdc++-v3/src/nonshared11/locale-inst.cc.jj	2016-07-22 11:37:16.408402501 +0200
++++ libstdc++-v3/src/nonshared11/locale-inst.cc	2016-07-22 11:56:34.403347351 +0200
 @@ -0,0 +1,93 @@
 +// Locale support -*- C++ -*-
 +
@@ -7106,21 +7111,21 @@
 +asm (".hidden _ZTSSt9time_base");
 +#ifdef C_is_char
 +asm (".hidden _ZNSt19istreambuf_iteratorIcSt11char_traitsIcEEppEv");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZSt14__add_groupingIcEPT_S1_S0_PKcjPKS0_S5_");
 +#else
 +asm (".hidden _ZSt14__add_groupingIcEPT_S1_S0_PKcmPKS0_S5_");
 +#endif
 +#else
 +asm (".hidden _ZNSt19istreambuf_iteratorIwSt11char_traitsIwEEppEv");
-+#ifdef __i386__
++#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZSt14__add_groupingIwEPT_S1_S0_PKcjPKS0_S5_");
 +#else
 +asm (".hidden _ZSt14__add_groupingIwEPT_S1_S0_PKcmPKS0_S5_");
 +#endif
 +#endif
---- libstdc++-v3/src/nonshared11/cow-fstream-inst.cc.jj	2016-07-21 19:15:05.622534446 +0200
-+++ libstdc++-v3/src/nonshared11/cow-fstream-inst.cc	2016-07-21 19:15:05.622534446 +0200
+--- libstdc++-v3/src/nonshared11/cow-fstream-inst.cc.jj	2016-07-22 11:37:16.408402501 +0200
++++ libstdc++-v3/src/nonshared11/cow-fstream-inst.cc	2016-07-22 11:37:16.408402501 +0200
 @@ -0,0 +1,48 @@
 +// Explicit instantiation file.
 +
@@ -7170,8 +7175,8 @@
 +#endif
 +
 +}
---- libstdc++-v3/src/nonshared11/nested_exception.cc.jj	2016-07-21 19:15:05.622534446 +0200
-+++ libstdc++-v3/src/nonshared11/nested_exception.cc	2016-07-21 19:15:05.622534446 +0200
+--- libstdc++-v3/src/nonshared11/nested_exception.cc.jj	2016-07-22 11:37:16.409402488 +0200
++++ libstdc++-v3/src/nonshared11/nested_exception.cc	2016-07-22 11:37:16.409402488 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -7197,8 +7202,8 @@
 +
 +#include "../libsupc++/nested_exception.cc"
 +asm (".hidden _ZTSSt16nested_exception");
---- libstdc++-v3/src/nonshared11/bad_array_new.cc.jj	2016-07-21 19:15:05.623534434 +0200
-+++ libstdc++-v3/src/nonshared11/bad_array_new.cc	2016-07-21 19:15:05.623534434 +0200
+--- libstdc++-v3/src/nonshared11/bad_array_new.cc.jj	2016-07-22 11:37:16.409402488 +0200
++++ libstdc++-v3/src/nonshared11/bad_array_new.cc	2016-07-22 11:37:16.409402488 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2014-2016 Free Software Foundation, Inc.
 +//
@@ -7223,8 +7228,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/bad_array_new.cc"
---- libstdc++-v3/src/nonshared11/streambuf-inst.cc.jj	2016-07-21 19:15:05.623534434 +0200
-+++ libstdc++-v3/src/nonshared11/streambuf-inst.cc	2016-07-21 19:15:05.623534434 +0200
+--- libstdc++-v3/src/nonshared11/streambuf-inst.cc.jj	2016-07-22 11:37:16.409402488 +0200
++++ libstdc++-v3/src/nonshared11/streambuf-inst.cc	2016-07-22 11:37:16.409402488 +0200
 @@ -0,0 +1,42 @@
 +// Explicit instantiation file.
 +
@@ -7268,8 +7273,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc.jj	2016-07-21 19:15:05.623534434 +0200
-+++ libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc	2016-07-21 19:15:05.623534434 +0200
+--- libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc.jj	2016-07-22 11:37:16.409402488 +0200
++++ libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc	2016-07-22 11:37:16.409402488 +0200
 @@ -0,0 +1,38 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -7309,8 +7314,8 @@
 +asm (".hidden _ZSt13__bind_simpleIMSt6threadFvvEJSt17reference_wrapperIS0_EEENSt19_Bind_simple_helperIT_JDpT0_EE6__typeEOS6_DpOS7_"); 
 +asm (".hidden _ZNSt13__future_base19_Async_state_common15_M_run_deferredEv"); 
 +asm (".hidden _ZNSt13__future_base7_ResultIvE10_M_destroyEv");
---- libstdc++-v3/src/nonshared11/wstring-inst.cc.jj	2016-07-21 19:15:05.623534434 +0200
-+++ libstdc++-v3/src/nonshared11/wstring-inst.cc	2016-07-21 19:15:05.623534434 +0200
+--- libstdc++-v3/src/nonshared11/wstring-inst.cc.jj	2016-07-22 11:37:16.410402476 +0200
++++ libstdc++-v3/src/nonshared11/wstring-inst.cc	2016-07-22 11:37:16.410402476 +0200
 @@ -0,0 +1,31 @@
 +// wide string support -*- C++ -*-
 +
@@ -7343,8 +7348,8 @@
 +#include "../c++11/wstring-inst.cc"
 +asm (".hidden _ZN9__gnu_cxxeqIPKwNSt7__cxx1112basic_stringIwSt11char_traitsIwESaIwEEEEEbRKNS_17__normal_iteratorIT_T0_EESE_");
 +asm (".hidden _ZN9__gnu_cxxeqIPwNSt7__cxx1112basic_stringIwSt11char_traitsIwESaIwEEEEEbRKNS_17__normal_iteratorIT_T0_EESD_");
---- libstdc++-v3/src/nonshared11/ios-inst.cc.jj	2016-07-21 19:15:05.623534434 +0200
-+++ libstdc++-v3/src/nonshared11/ios-inst.cc	2016-07-21 19:15:05.623534434 +0200
+--- libstdc++-v3/src/nonshared11/ios-inst.cc.jj	2016-07-22 11:37:16.410402476 +0200
++++ libstdc++-v3/src/nonshared11/ios-inst.cc	2016-07-22 11:37:16.410402476 +0200
 @@ -0,0 +1,49 @@
 +// Explicit instantiation file.
 +
@@ -7395,8 +7400,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/future48.cc.jj	2016-07-21 19:15:05.624534422 +0200
-+++ libstdc++-v3/src/nonshared11/future48.cc	2016-07-21 19:15:05.624534422 +0200
+--- libstdc++-v3/src/nonshared11/future48.cc.jj	2016-07-22 11:37:16.410402476 +0200
++++ libstdc++-v3/src/nonshared11/future48.cc	2016-07-22 11:37:16.410402476 +0200
 @@ -0,0 +1,26 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -7424,8 +7429,8 @@
 +#include "../c++11/future.cc"
 +asm (".hidden _ZSt16__at_thread_exitPSt20__at_thread_exit_elt");
 +asm (".hidden _ZNSt13__future_base13_State_baseV211_Make_ready6_S_runEPv");
---- libstdc++-v3/src/nonshared11/fstream-inst.cc.jj	2016-07-21 19:15:05.624534422 +0200
-+++ libstdc++-v3/src/nonshared11/fstream-inst.cc	2016-07-21 19:15:05.624534422 +0200
+--- libstdc++-v3/src/nonshared11/fstream-inst.cc.jj	2016-07-22 11:37:16.410402476 +0200
++++ libstdc++-v3/src/nonshared11/fstream-inst.cc	2016-07-22 11:37:16.410402476 +0200
 @@ -0,0 +1,79 @@
 +// Explicit instantiation file.
 +
@@ -7506,8 +7511,8 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
---- libstdc++-v3/src/nonshared11/bad_array_length.cc.jj	2016-07-21 19:15:05.624534422 +0200
-+++ libstdc++-v3/src/nonshared11/bad_array_length.cc	2016-07-21 19:15:05.624534422 +0200
+--- libstdc++-v3/src/nonshared11/bad_array_length.cc.jj	2016-07-22 11:37:16.411402464 +0200
++++ libstdc++-v3/src/nonshared11/bad_array_length.cc	2016-07-22 11:37:16.410402476 +0200
 @@ -0,0 +1,23 @@
 +// Copyright (C) 2014-2016 Free Software Foundation, Inc.
 +//
@@ -7532,8 +7537,8 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../libsupc++/bad_array_length.cc"
---- libstdc++-v3/src/nonshared11/regex.cc.jj	2016-07-21 19:15:05.624534422 +0200
-+++ libstdc++-v3/src/nonshared11/regex.cc	2016-07-21 19:15:05.624534422 +0200
+--- libstdc++-v3/src/nonshared11/regex.cc.jj	2016-07-22 11:37:16.411402464 +0200
++++ libstdc++-v3/src/nonshared11/regex.cc	2016-07-22 11:37:16.411402464 +0200
 @@ -0,0 +1,25 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -7560,8 +7565,8 @@
 +#include "../c++11/regex.cc"
 +
 +asm (".hidden _ZTSSt11regex_error");
---- libstdc++-v3/src/nonshared11/cow-sstream-inst44.cc.jj	2016-07-21 19:15:05.624534422 +0200
-+++ libstdc++-v3/src/nonshared11/cow-sstream-inst44.cc	2016-07-21 19:15:05.624534422 +0200
+--- libstdc++-v3/src/nonshared11/cow-sstream-inst44.cc.jj	2016-07-22 11:37:16.411402464 +0200
++++ libstdc++-v3/src/nonshared11/cow-sstream-inst44.cc	2016-07-22 11:37:16.411402464 +0200
 @@ -0,0 +1,24 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
@@ -7587,8 +7592,8 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX11_44
 +#include "cow-sstream-inst.cc"
---- libstdc++-v3/src/shared/hashtable-aux.cc.jj	2016-07-19 10:33:27.169867828 +0200
-+++ libstdc++-v3/src/shared/hashtable-aux.cc	2016-07-21 19:15:05.633534312 +0200
+--- libstdc++-v3/src/shared/hashtable-aux.cc.jj	2016-07-21 20:21:57.118926720 +0200
++++ libstdc++-v3/src/shared/hashtable-aux.cc	2016-07-22 11:37:16.411402464 +0200
 @@ -22,6 +22,9 @@
  // see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
  // <http://www.gnu.org/licenses/>.
@@ -7605,8 +7610,8 @@
  } // namespace __detail
 +
 +#endif
---- libstdc++-v3/src/c++98/locale_facets.cc.jj	2016-07-19 10:33:27.170867815 +0200
-+++ libstdc++-v3/src/c++98/locale_facets.cc	2016-07-21 19:15:05.643534190 +0200
+--- libstdc++-v3/src/c++98/locale_facets.cc.jj	2016-07-21 20:21:57.147926371 +0200
++++ libstdc++-v3/src/c++98/locale_facets.cc	2016-07-22 11:37:16.411402464 +0200
 @@ -27,6 +27,7 @@ namespace std _GLIBCXX_VISIBILITY(defaul
  {
  _GLIBCXX_BEGIN_NAMESPACE_VERSION
@@ -7639,8 +7644,8 @@
  
  _GLIBCXX_END_NAMESPACE_VERSION
  } // namespace
---- libstdc++-v3/src/Makefile.am.jj	2016-07-19 10:33:27.170867815 +0200
-+++ libstdc++-v3/src/Makefile.am	2016-07-21 19:15:05.644534178 +0200
+--- libstdc++-v3/src/Makefile.am.jj	2016-07-21 20:21:57.138926479 +0200
++++ libstdc++-v3/src/Makefile.am	2016-07-22 11:37:16.412402451 +0200
 @@ -28,7 +28,7 @@ else
  filesystem_dir =
  endif
@@ -7685,8 +7690,8 @@
  
  cxx98_sources = \
  	compatibility.cc \
---- libstdc++-v3/src/Makefile.in.jj	2016-07-19 10:33:27.174867763 +0200
-+++ libstdc++-v3/src/Makefile.in	2016-07-21 19:15:05.654534056 +0200
+--- libstdc++-v3/src/Makefile.in.jj	2016-07-21 20:21:57.272924864 +0200
++++ libstdc++-v3/src/Makefile.in	2016-07-22 11:37:16.412402451 +0200
 @@ -110,7 +110,7 @@ am__uninstall_files_from_dir = { \
           $(am__cd) "$$dir" && rm -f $$files; }; \
    }
@@ -7855,8 +7860,8 @@
  	uninstall-toolexeclibLTLIBRARIES
  
  
---- libstdc++-v3/src/c++11/ios.cc.jj	2016-07-19 10:33:27.173867776 +0200
-+++ libstdc++-v3/src/c++11/ios.cc	2016-07-21 19:15:05.696533545 +0200
+--- libstdc++-v3/src/c++11/ios.cc.jj	2016-07-21 20:21:57.197925768 +0200
++++ libstdc++-v3/src/c++11/ios.cc	2016-07-22 11:37:16.413402439 +0200
 @@ -33,6 +33,7 @@ namespace std _GLIBCXX_VISIBILITY(defaul
  {
  _GLIBCXX_BEGIN_NAMESPACE_VERSION
@@ -7873,8 +7878,8 @@
  
    void
    ios_base::_M_move(ios_base& __rhs) noexcept
---- libstdc++-v3/src/c++11/condition_variable.cc.jj	2016-07-19 10:33:27.173867776 +0200
-+++ libstdc++-v3/src/c++11/condition_variable.cc	2016-07-21 19:15:05.707533411 +0200
+--- libstdc++-v3/src/c++11/condition_variable.cc.jj	2016-07-21 20:21:57.247925166 +0200
++++ libstdc++-v3/src/c++11/condition_variable.cc	2016-07-22 11:37:16.413402439 +0200
 @@ -31,6 +31,7 @@ namespace std _GLIBCXX_VISIBILITY(defaul
  {
  _GLIBCXX_BEGIN_NAMESPACE_VERSION
@@ -7891,8 +7896,8 @@
  
    extern void
    __at_thread_exit(__at_thread_exit_elt*);
---- libstdc++-v3/src/c++11/shared_ptr.cc.jj	2016-07-19 10:33:27.174867763 +0200
-+++ libstdc++-v3/src/c++11/shared_ptr.cc	2016-07-21 19:15:05.707533411 +0200
+--- libstdc++-v3/src/c++11/shared_ptr.cc.jj	2016-07-21 20:21:57.261924997 +0200
++++ libstdc++-v3/src/c++11/shared_ptr.cc	2016-07-22 11:37:16.413402439 +0200
 @@ -28,11 +28,13 @@ namespace std _GLIBCXX_VISIBILITY(defaul
  {
  _GLIBCXX_BEGIN_NAMESPACE_VERSION
@@ -7907,8 +7912,8 @@
  
  #ifdef __GTHREADS
    namespace
---- libstdc++-v3/src/c++11/future.cc.jj	2016-07-19 10:33:27.171867802 +0200
-+++ libstdc++-v3/src/c++11/future.cc	2016-07-21 19:15:05.707533411 +0200
+--- libstdc++-v3/src/c++11/future.cc.jj	2016-07-21 20:21:57.170926094 +0200
++++ libstdc++-v3/src/c++11/future.cc	2016-07-22 11:37:16.413402439 +0200
 @@ -24,6 +24,7 @@
  
  #include <future>
@@ -7947,8 +7952,8 @@
  
    void
    __future_base::_State_baseV2::_Make_ready::_S_run(void* p)
---- libstdc++-v3/src/c++11/cow-string-inst.cc.jj	2016-07-19 10:33:27.172867789 +0200
-+++ libstdc++-v3/src/c++11/cow-string-inst.cc	2016-07-21 19:15:05.714533326 +0200
+--- libstdc++-v3/src/c++11/cow-string-inst.cc.jj	2016-07-21 20:21:57.262924985 +0200
++++ libstdc++-v3/src/c++11/cow-string-inst.cc	2016-07-22 11:37:16.414402426 +0200
 @@ -27,7 +27,11 @@
  //
  
@@ -7977,8 +7982,8 @@
  
  _GLIBCXX_END_NAMESPACE_VERSION
  } // namespace
---- libstdc++-v3/src/c++11/compatibility-c++0x.cc.jj	2016-07-19 10:33:27.172867789 +0200
-+++ libstdc++-v3/src/c++11/compatibility-c++0x.cc	2016-07-21 19:15:05.714533326 +0200
+--- libstdc++-v3/src/c++11/compatibility-c++0x.cc.jj	2016-07-21 20:21:57.228925395 +0200
++++ libstdc++-v3/src/c++11/compatibility-c++0x.cc	2016-07-22 11:37:16.414402426 +0200
 @@ -44,6 +44,7 @@
  
  namespace std _GLIBCXX_VISIBILITY(default)
@@ -8031,8 +8036,8 @@
 +#endif
  }
  #endif
---- libstdc++-v3/src/c++11/system_error.cc.jj	2016-07-19 10:33:27.172867789 +0200
-+++ libstdc++-v3/src/c++11/system_error.cc	2016-07-21 19:15:05.727533168 +0200
+--- libstdc++-v3/src/c++11/system_error.cc.jj	2016-07-21 20:21:57.211925599 +0200
++++ libstdc++-v3/src/c++11/system_error.cc	2016-07-22 11:37:16.414402426 +0200
 @@ -82,8 +82,10 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
  
    const error_category& 
@@ -8057,8 +8062,8 @@
  
  #if _GLIBCXX_USE_CXX11_ABI
    // Return error_category::message() as a COW string
---- libstdc++-v3/src/c++11/random.cc.jj	2016-07-19 10:33:27.172867789 +0200
-+++ libstdc++-v3/src/c++11/random.cc	2016-07-21 19:15:05.727533168 +0200
+--- libstdc++-v3/src/c++11/random.cc.jj	2016-07-21 20:21:57.183925937 +0200
++++ libstdc++-v3/src/c++11/random.cc	2016-07-22 11:37:16.415402414 +0200
 @@ -59,6 +59,7 @@ namespace std _GLIBCXX_VISIBILITY(defaul
      }
  
@@ -8091,8 +8096,8 @@
  
    template class mersenne_twister_engine<
      uint_fast32_t,
---- libstdc++-v3/src/c++11/thread.cc.jj	2016-07-19 10:33:27.173867776 +0200
-+++ libstdc++-v3/src/c++11/thread.cc	2016-07-21 19:15:05.727533168 +0200
+--- libstdc++-v3/src/c++11/thread.cc.jj	2016-07-21 20:21:57.217925527 +0200
++++ libstdc++-v3/src/c++11/thread.cc	2016-07-22 11:37:16.415402414 +0200
 @@ -127,6 +127,7 @@ _GLIBCXX_BEGIN_NAMESPACE_VERSION
  
    thread::_State::~_State() = default;
@@ -8157,8 +8162,8 @@
  
  _GLIBCXX_END_NAMESPACE_VERSION
  }
---- libstdc++-v3/configure.ac.jj	2016-07-19 10:33:27.166867866 +0200
-+++ libstdc++-v3/configure.ac	2016-07-21 19:15:05.729533143 +0200
+--- libstdc++-v3/configure.ac.jj	2016-07-21 20:21:57.042927637 +0200
++++ libstdc++-v3/configure.ac	2016-07-22 11:37:16.415402414 +0200
 @@ -498,6 +498,11 @@ GLIBCXX_EXPORT_INSTALL_INFO
  GLIBCXX_EXPORT_INCLUDES
  GLIBCXX_EXPORT_FLAGS
@@ -8171,8 +8176,8 @@
  dnl In autoconf 2.5x, AC_OUTPUT is replaced by four AC_CONFIG_* macros,
  dnl which can all be called multiple times as needed, plus one (different)
  dnl AC_OUTPUT macro.  This one lists the files to be created:
---- libstdc++-v3/configure.jj	2016-07-19 10:33:27.169867828 +0200
-+++ libstdc++-v3/configure	2016-07-21 19:15:05.765532705 +0200
+--- libstdc++-v3/configure.jj	2016-07-21 20:21:57.096926986 +0200
++++ libstdc++-v3/configure	2016-07-22 11:37:16.428402251 +0200
 @@ -602,6 +602,8 @@ ac_subst_vars='am__EXEEXT_FALSE
  am__EXEEXT_TRUE
  LTLIBOBJS
