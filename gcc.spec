@@ -1,12 +1,12 @@
 %{?scl:%global __strip %%{_scl_root}/usr/bin/strip}
 %{?scl:%global __objdump %%{_scl_root}/usr/bin/objdump}
 %{?scl:%scl_package gcc}
-%global DATE 20160810
-%global SVNREV 239320
-%global gcc_version 6.1.1
+%global DATE 20160901
+%global SVNREV 239935
+%global gcc_version 6.2.1
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %{release}, append them after %{gcc_release} on Release: line.
-%global gcc_release 5
+%global gcc_release 1
 %global mpc_version 0.8.1
 %global isl_version 0.14
 %global graphviz_version 2.26.0
@@ -29,7 +29,7 @@
 %else
 %global build_libasan 0
 %endif
-%ifarch x86_64
+%ifarch x86_64 aarch64
 %global build_libtsan 1
 %else
 %global build_libtsan 0
@@ -2583,6 +2583,13 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Thu Sep  1 2016 Jakub Jelinek <jakub@redhat.com> 6.2.1-1
+- update from Fedora 6.2.1-1
+
+* Thu Aug 18 2016 Jakub Jelinek <jakub@redhat.com> 6.1.1-6
+- update from Fedora 6.1.1-6
+- reenable tsan on aarch64
+
 * Wed Aug 10 2016 Jakub Jelinek <jakub@redhat.com> 6.1.1-5
 - update from Fedora 6.1.1-5
 - make sure to use DTS strip and objdump during brp scripts (#1365531,
