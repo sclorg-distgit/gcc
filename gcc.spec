@@ -1,12 +1,12 @@
+%{?scl:%global __strip %%{_scl_root}/usr/bin/strip}
+%{?scl:%global __objdump %%{_scl_root}/usr/bin/objdump}
 %{?scl:%scl_package gcc}
-%{?scl:%global __strip strip}
-%{?scl:%global __objdump objdump}
-%global DATE 20160721
-%global SVNREV 238592
+%global DATE 20160810
+%global SVNREV 239320
 %global gcc_version 6.1.1
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %{release}, append them after %{gcc_release} on Release: line.
-%global gcc_release 4
+%global gcc_release 5
 %global mpc_version 0.8.1
 %global isl_version 0.14
 %global graphviz_version 2.26.0
@@ -29,7 +29,7 @@
 %else
 %global build_libasan 0
 %endif
-%ifarch x86_64 aarch64
+%ifarch x86_64
 %global build_libtsan 1
 %else
 %global build_libtsan 0
@@ -111,11 +111,7 @@ BuildRequires: binutils >= 2.19.51.0.14-33
 # -static is used several times.
 BuildRequires: glibc-static
 %if 0%{?scl:1}
-%if 0%{?rhel} >= 7
-BuildRequires: binutils >= 2.22.52.0.1
-%else
 BuildRequires: %{?scl_prefix}binutils >= 2.22.52.0.1
-%endif
 # For testing
 BuildRequires: %{?scl_prefix}gdb >= 7.4.50
 %endif
@@ -157,11 +153,7 @@ BuildRequires: libunwind >= 0.98
 # Need binutils which support %gnu_unique_object >= 2.19.51.0.14
 # Need binutils which support .cfi_sections >= 2.19.51.0.14-33
 %if 0%{?scl:1}
-%if 0%{?rhel} >= 7
-Requires: binutils >= 2.22.52.0.1
-%else
 Requires: %{?scl_prefix}binutils >= 2.22.52.0.1
-%endif
 %else
 Requires: binutils >= 2.19.51.0.14-33
 %endif
@@ -2591,5 +2583,14 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Wed Aug 10 2016 Jakub Jelinek <jakub@redhat.com> 6.1.1-5
+- update from Fedora 6.1.1-5
+- make sure to use DTS strip and objdump during brp scripts (#1365531,
+  #1365602)
+- use DTS binutils even on RHEL7
+
+* Mon Aug  1 2016 Marek Polacek <polacek@redhat.com> 6.1.1-4.1
+- disable tsan on aarch64 (#1361770)
+
 * Thu Jul 21 2016 Jakub Jelinek <jakub@redhat.com> 6.1.1-4
 - new package
