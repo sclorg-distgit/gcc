@@ -1,12 +1,12 @@
 %{?scl:%global __strip %%{_scl_root}/usr/bin/strip}
 %{?scl:%global __objdump %%{_scl_root}/usr/bin/objdump}
 %{?scl:%scl_package gcc}
-%global DATE 20160901
-%global SVNREV 239935
+%global DATE 20160916
+%global SVNREV 240184
 %global gcc_version 6.2.1
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %{release}, append them after %{gcc_release} on Release: line.
-%global gcc_release 1
+%global gcc_release 2
 %global mpc_version 0.8.1
 %global isl_version 0.14
 %global graphviz_version 2.26.0
@@ -2583,6 +2583,9 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Fri Sep 16 2016 Jakub Jelinek <jakub@redhat.com> 6.2.1-2
+- update from Fedora 6.2.1-2
+
 * Thu Sep  1 2016 Jakub Jelinek <jakub@redhat.com> 6.2.1-1
 - update from Fedora 6.2.1-1
 
