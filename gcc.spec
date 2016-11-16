@@ -6,7 +6,7 @@
 %global gcc_version 6.2.1
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %{release}, append them after %{gcc_release} on Release: line.
-%global gcc_release 2
+%global gcc_release 3
 %global mpc_version 0.8.1
 %global isl_version 0.14
 %global graphviz_version 2.26.0
@@ -82,7 +82,7 @@ Summary: GCC version 6
 Name: %{?scl_prefix}gcc
 #Name: %{?scl_prefix}gcc%{!?scl:5}
 Version: %{gcc_version}
-Release: %{gcc_release}%{?dist}
+Release: %{gcc_release}.1%{?dist}
 # libgcc, libgfortran, libmudflap, libgomp, libstdc++ and crtstuff have
 # GCC Runtime Exception.
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
@@ -324,7 +324,7 @@ Manual, doxygen generated API information and Frequently Asked Questions
 for the GNU standard C++ library.
 
 %package gfortran
-Summary: Fortran support for GCC 5
+Summary: Fortran support for GCC 6
 Group: Development/Languages
 Requires: %{?scl_prefix}gcc%{!?scl:5} = %{version}-%{release}
 %if 0%{?rhel} >= 7
@@ -354,12 +354,12 @@ The %{?scl_prefix}gcc%{!?scl:5}-gfortran package provides support for compiling 
 programs with the GNU Compiler Collection.
 
 %package gdb-plugin
-Summary: GCC 5 plugin for GDB
+Summary: GCC 6 plugin for GDB
 Group: Development/Debuggers
 Requires: %{?scl_prefix}gcc%{!?scl:5} = %{version}-%{release}
 
 %description gdb-plugin
-This package contains GCC 5 plugin for GDB C expression evaluation.
+This package contains GCC 6 plugin for GDB C expression evaluation.
 
 %package -n %{?scl_prefix}libgccjit
 Summary: Library for embedding GCC inside programs and libraries
@@ -367,7 +367,7 @@ Group: System Environment/Libraries
 Requires: %{?scl_prefix}gcc%{!?scl:5} = %{version}-%{release}
 
 %description -n %{?scl_prefix}libgccjit
-This package contains shared library with GCC 5 JIT front end.
+This package contains shared library with GCC 6 JIT front end.
 
 %package -n %{?scl_prefix}libgccjit-devel
 Summary: Support for embedding GCC inside programs and libraries
@@ -376,7 +376,7 @@ Requires: %{?scl_prefix}libgccjit = %{version}-%{release}
 Requires: %{?scl_prefix}libgccjit-docs = %{version}-%{release}
 
 %description -n %{?scl_prefix}libgccjit-devel
-This package contains header files for GCC 5 JIT front end.
+This package contains header files for GCC 6 JIT front end.
 
 %package -n %{?scl_prefix}libgccjit-docs
 Summary: Documentation for embedding GCC inside programs and libraries
@@ -386,10 +386,10 @@ Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
 
 %description -n %{?scl_prefix}libgccjit-docs
-This package contains documentation for GCC 5 JIT front end.
+This package contains documentation for GCC 6 JIT front end.
 
 %package -n %{?scl_prefix}libquadmath
-Summary: GCC 5 __float128 shared support library
+Summary: GCC 6 __float128 shared support library
 Group: System Environment/Libraries
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
@@ -399,7 +399,7 @@ This package contains GCC shared support library which is needed
 for __float128 math support and for Fortran REAL*16 support.
 
 %package -n %{?scl_prefix}libquadmath-devel
-Summary: GCC 5 __float128 support
+Summary: GCC 6 __float128 support
 Group: Development/Libraries
 %if 0%{!?scl:1}
 Requires: %{?scl_prefix}libquadmath = %{version}-%{release}
@@ -446,7 +446,7 @@ Requires: libmpc-devel >= 0.8.1
 
 %description plugin-devel
 This package contains header files and other support files
-for compiling GCC 5 plugins.  The GCC plugin ABI is currently
+for compiling GCC 6 plugins.  The GCC plugin ABI is currently
 not stable, so plugins must be rebuilt any time GCC is updated.
 
 %package -n libatomic
@@ -468,20 +468,20 @@ Requires: libatomic >= 4.8.0
 %description -n %{?scl_prefix}libatomic-devel
 This package contains GNU Atomic static libraries.
 
-%package -n libasan2
-Summary: The Address Sanitizer runtime library from GCC 5
+%package -n libasan3
+Summary: The Address Sanitizer runtime library from GCC 6
 Group: System Environment/Libraries
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
 
-%description -n libasan2
-This package contains the Address Sanitizer library from GCC 5
+%description -n libasan3
+This package contains the Address Sanitizer library from GCC 6
 which is used for -fsanitize=address instrumented programs.
 
 %package -n %{?scl_prefix}libasan-devel
 Summary: The Address Sanitizer static library
 Group: Development/Libraries
-Requires: libasan2 >= 5.1.1
+Requires: libasan3 >= 5.1.1
 
 %description -n %{?scl_prefix}libasan-devel
 This package contains Address Sanitizer static runtime library.
@@ -1875,9 +1875,9 @@ fi
 
 %postun -n libatomic -p /sbin/ldconfig
 
-%post -n libasan2 -p /sbin/ldconfig
+%post -n libasan3 -p /sbin/ldconfig
 
-%postun -n libasan2 -p /sbin/ldconfig
+%postun -n libasan3 -p /sbin/ldconfig
 
 %post -n libtsan -p /sbin/ldconfig
 
@@ -2032,6 +2032,19 @@ fi
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/vec_types.h
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/htmintrin.h
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/htmxlintrin.h
+%endif
+%ifarch %{arm}
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/unwind-arm-common.h
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/mmintrin.h
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/arm_neon.h
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/arm_acle.h
+%endif
+%ifarch aarch64
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/arm_neon.h
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/arm_acle.h
+%endif
+%ifarch sparc sparcv9 sparc64
+%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/visintrin.h
 %endif
 %ifarch s390 s390x
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/s390intrin.h
@@ -2434,7 +2447,7 @@ fi
 %endif
 
 %if %{build_libasan}
-%files -n libasan2
+%files -n libasan3
 %defattr(-,root,root,-)
 %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libasan.so.3*
 
@@ -2583,6 +2596,13 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Thu Oct 20 2016 Marek Polacek <polacek@redhat.com> 6.2.1-3.1
+- rename libasan2 to libasan3 (#1386146)
+- update old references to GCC 5
+
+* Fri Oct  7 2016 Marek Polacek <polacek@redhat.com> 6.2.1-3
+- add arm_neon.h and arm_acle.h intrinsic headers on aarch64 (#1382733)
+
 * Fri Sep 16 2016 Jakub Jelinek <jakub@redhat.com> 6.2.1-2
 - update from Fedora 6.2.1-2
 
