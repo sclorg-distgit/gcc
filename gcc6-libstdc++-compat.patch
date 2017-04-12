@@ -2994,7 +2994,7 @@
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_releaseEv");
 --- libstdc++-v3/src/nonshared11/cxx11-locale-inst.cc.jj	2016-07-22 11:37:16.393402688 +0200
 +++ libstdc++-v3/src/nonshared11/cxx11-locale-inst.cc	2016-07-22 11:37:16.393402688 +0200
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,45 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -3018,15 +3018,24 @@
 +// <http://www.gnu.org/licenses/>.
 +
 +#include "../c++11/cxx11-locale-inst.cc"
-+asm (".hidden _ZNKSt11__use_cacheISt16__numpunct_cacheIcEEclERKSt6locale");
 +asm (".hidden _ZNKSt19istreambuf_iteratorIcSt11char_traitsIcEE6_M_getEv");
 +asm (".hidden _ZNKSt5ctypeIcE5widenEPKcS2_Pc");
++#if !defined (__powerpc__) && !defined (__s390__) && !defined (__s390x__)
++asm (".hidden _ZNKSt11__use_cacheISt16__numpunct_cacheIcEEclERKSt6locale");
 +asm (".hidden _ZNKSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IjEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IlEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11ImEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11ItEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IxEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IyEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
++#else
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IjEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IlEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11ImEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11ItEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IxEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIcSt19istreambuf_iteratorIcSt11char_traitsIcEEE14_M_extract_intB5cxx11IyEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++#endif
 +asm (".hidden _ZNKSt19istreambuf_iteratorIcSt11char_traitsIcEE5equalERKS2_");
 +asm (".hidden _ZNKSt5ctypeIcE8do_widenEPKcS2_Pc");
 +asm (".hidden _ZNKSt5ctypeIcE8do_widenEc");
@@ -3190,7 +3199,7 @@
 +#include "../c++11/ios.cc"
 --- libstdc++-v3/src/nonshared11/cow-shim_facets.cc.jj	2016-07-22 11:37:16.394402676 +0200
 +++ libstdc++-v3/src/nonshared11/cow-shim_facets.cc	2016-07-22 11:52:03.980619192 +0200
-@@ -0,0 +1,170 @@
+@@ -0,0 +1,181 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -3236,22 +3245,33 @@
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_113time_get_shimIwE13do_date_orderEv");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_113time_get_shimIwE14do_get_weekdayESt19istreambuf_iteratorIwSt11char_traitsIwEES6_RSt8ios_baseRSt12_Ios_IostateP2tm");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_113time_get_shimIwE16do_get_monthnameESt19istreambuf_iteratorIwSt11char_traitsIwEES6_RSt8ios_baseRSt12_Ios_IostateP2tm");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRSs");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRSbIwS5_SaIwEE");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basece");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basecRKSs");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewe");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewRKSbIwS5_SaIwEE");
 +asm (".hidden _ZNKSt6locale5facet11_M_cow_shimEPKNS_2idE");
 +asm (".hidden _ZNKSt6locale5facet19_M_remove_referenceEv");
 +asm (".hidden _ZNSt13__facet_shims10__time_getIcEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_S5_RSt8ios_baseRSt12_Ios_IostateP2tmc");
 +asm (".hidden _ZNSt13__facet_shims10__time_getIwEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_S5_RSt8ios_baseRSt12_Ios_IostateP2tmc");
++#if !defined (__powerpc__) && !defined (__s390__) && !defined (__s390x__)
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basece");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewe");
 +asm (".hidden _ZNSt13__facet_shims11__money_getIcEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePePNS_12__any_stringE");
 +asm (".hidden _ZNSt13__facet_shims11__money_getIwEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePePNS_12__any_stringE");
 +asm (".hidden _ZNSt13__facet_shims11__money_putIcEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_bRSt8ios_baseS2_ePKNS_12__any_stringE");
 +asm (".hidden _ZNSt13__facet_shims11__money_putIwEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_bRSt8ios_baseS2_ePKNS_12__any_stringE");
++#else
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRg");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRg");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basecg");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewg");
++asm (".hidden _ZNSt13__facet_shims11__money_getIcEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePgPNS_12__any_stringE");
++asm (".hidden _ZNSt13__facet_shims11__money_getIwEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePgPNS_12__any_stringE");
++asm (".hidden _ZNSt13__facet_shims11__money_putIcEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_bRSt8ios_baseS2_gPKNS_12__any_stringE");
++asm (".hidden _ZNSt13__facet_shims11__money_putIwEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb0EEPKNSt6locale5facetES5_bRSt8ios_baseS2_gPKNS_12__any_stringE");
++#endif
 +asm (".hidden _ZNSt13__facet_shims12_GLOBAL__N_112collate_shimIcED0Ev");
 +asm (".hidden _ZNSt13__facet_shims12_GLOBAL__N_112collate_shimIcED1Ev");
 +asm (".hidden _ZNSt13__facet_shims12_GLOBAL__N_112collate_shimIcED2Ev");
@@ -3773,7 +3793,7 @@
 +#include "../c++11/compatibility-c++0x.cc"
 --- libstdc++-v3/src/nonshared11/cxx11-shim_facets.cc.jj	2016-07-22 11:37:16.397402638 +0200
 +++ libstdc++-v3/src/nonshared11/cxx11-shim_facets.cc	2016-07-22 11:53:24.065650644 +0200
-@@ -0,0 +1,170 @@
+@@ -0,0 +1,181 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -3819,22 +3839,33 @@
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_113time_get_shimIwE13do_date_orderEv");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_113time_get_shimIwE14do_get_weekdayESt19istreambuf_iteratorIwSt11char_traitsIwEES6_RSt8ios_baseRSt12_Ios_IostateP2tm");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_113time_get_shimIwE16do_get_monthnameESt19istreambuf_iteratorIwSt11char_traitsIwEES6_RSt8ios_baseRSt12_Ios_IostateP2tm");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRNSt7__cxx1112basic_stringIcS5_SaIcEEE");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRNSt7__cxx1112basic_stringIwS5_SaIwEEE");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basece");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basecRKNSt7__cxx1112basic_stringIcS5_SaIcEEE");
-+asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewe");
 +asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewRKNSt7__cxx1112basic_stringIwS5_SaIwEEE");
 +asm (".hidden _ZNKSt6locale5facet11_M_sso_shimEPKNS_2idE");
 +asm (".hidden _ZNKSt6locale5facet19_M_remove_referenceEv");
 +asm (".hidden _ZNSt13__facet_shims10__time_getIcEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_S5_RSt8ios_baseRSt12_Ios_IostateP2tmc");
 +asm (".hidden _ZNSt13__facet_shims10__time_getIwEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_S5_RSt8ios_baseRSt12_Ios_IostateP2tmc");
++#if !defined (__powerpc__) && !defined (__s390__) && !defined (__s390x__)
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRe");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basece");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewe");
 +asm (".hidden _ZNSt13__facet_shims11__money_getIcEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePePNS_12__any_stringE");
 +asm (".hidden _ZNSt13__facet_shims11__money_getIwEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePePNS_12__any_stringE");
 +asm (".hidden _ZNSt13__facet_shims11__money_putIcEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_bRSt8ios_baseS2_ePKNS_12__any_stringE");
 +asm (".hidden _ZNSt13__facet_shims11__money_putIwEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_bRSt8ios_baseS2_ePKNS_12__any_stringE");
++#else
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIcE6do_getESt19istreambuf_iteratorIcSt11char_traitsIcEES6_bRSt8ios_baseRSt12_Ios_IostateRg");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_get_shimIwE6do_getESt19istreambuf_iteratorIwSt11char_traitsIwEES6_bRSt8ios_baseRSt12_Ios_IostateRg");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIcE6do_putESt19ostreambuf_iteratorIcSt11char_traitsIcEEbRSt8ios_basecg");
++asm (".hidden _ZNKSt13__facet_shims12_GLOBAL__N_114money_put_shimIwE6do_putESt19ostreambuf_iteratorIwSt11char_traitsIwEEbRSt8ios_basewg");
++asm (".hidden _ZNSt13__facet_shims11__money_getIcEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePgPNS_12__any_stringE");
++asm (".hidden _ZNSt13__facet_shims11__money_getIwEESt19istreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_S5_bRSt8ios_baseRSt12_Ios_IostatePgPNS_12__any_stringE");
++asm (".hidden _ZNSt13__facet_shims11__money_putIcEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_bRSt8ios_baseS2_gPKNS_12__any_stringE");
++asm (".hidden _ZNSt13__facet_shims11__money_putIwEESt19ostreambuf_iteratorIT_St11char_traitsIS2_EESt17integral_constantIbLb1EEPKNSt6locale5facetES5_bRSt8ios_baseS2_gPKNS_12__any_stringE");
++#endif
 +asm (".hidden _ZNSt13__facet_shims12_GLOBAL__N_112collate_shimIcED0Ev");
 +asm (".hidden _ZNSt13__facet_shims12_GLOBAL__N_112collate_shimIcED1Ev");
 +asm (".hidden _ZNSt13__facet_shims12_GLOBAL__N_112collate_shimIcED2Ev");
@@ -5082,7 +5113,7 @@
 +asm (".hidden _ZNKSt3tr14hashIRKNSt7__cxx1112basic_stringIwSt11char_traitsIwESaIwEEEEclES8_");
 --- libstdc++-v3/src/nonshared11/cxx11-wlocale-inst.cc.jj	2016-07-22 11:37:16.403402563 +0200
 +++ libstdc++-v3/src/nonshared11/cxx11-wlocale-inst.cc	2016-07-22 11:54:57.649518841 +0200
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,48 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -5108,12 +5139,21 @@
 +#include "../c++11/cxx11-wlocale-inst.cc"
 +asm (".hidden _ZNKSt11__use_cacheISt16__numpunct_cacheIwEEclERKSt6locale");
 +asm (".hidden _ZNKSt19istreambuf_iteratorIwSt11char_traitsIwEE6_M_getEv");
++#if !defined (__powerpc__) && !defined (__s390__) && !defined (__s390x__)
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IjEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IlEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11ImEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11ItEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IxEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
 +asm (".hidden _ZNKSt7num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IyEES3_S3_S3_RSt8ios_baseRSt12_Ios_IostateRT_");
++#else
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IjEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IlEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11ImEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11ItEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IxEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++asm (".hidden _ZNKSt17__gnu_cxx_ldbl1287num_getIwSt19istreambuf_iteratorIwSt11char_traitsIwEEE14_M_extract_intB5cxx11IyEES4_S4_S4_RSt8ios_baseRSt12_Ios_IostateRT_");
++#endif
 +#if defined(__i386__) || (defined(__powerpc__) && !defined(__powerpc64__))
 +asm (".hidden _ZNSt15time_put_bynameIwSt19ostreambuf_iteratorIwSt11char_traitsIwEEEC1ERKNSt7__cxx1112basic_stringIcS1_IcESaIcEEEj");
 +asm (".hidden _ZNSt15time_put_bynameIwSt19ostreambuf_iteratorIwSt11char_traitsIwEEEC2ERKNSt7__cxx1112basic_stringIcS1_IcESaIcEEEj");
@@ -5852,7 +5892,7 @@
 +asm (".hidden _ZTVN9__gnu_cxx26__concurrence_unlock_errorE");
 --- libstdc++-v3/src/nonshared11/snprintf_lite.cc.jj	2016-07-22 11:37:16.406402526 +0200
 +++ libstdc++-v3/src/nonshared11/snprintf_lite.cc	2016-07-22 11:42:07.802829363 +0200
-@@ -0,0 +1,37 @@
+@@ -0,0 +1,40 @@
 +// Copyright (C) 2014-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -5879,9 +5919,12 @@
 +#ifdef __powerpc64__
 +asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcmm");
 +asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcmPKcS0_");
-+#elif defined(__i386__) || defined(__powerpc__)
++#elif defined(__i386__)
 +asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcjj");
 +asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcjPKcS0_");
++#elif defined(__powerpc__)
++asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcjj");
++asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcjPKcP13__va_list_tag");
 +#elif defined(__aarch64__)
 +asm (".hidden _ZN9__gnu_cxx15__concat_size_tEPcmm");
 +asm (".hidden _ZN9__gnu_cxx15__snprintf_liteEPcmPKcSt9__va_list");
@@ -7275,7 +7318,7 @@
 +} // namespace
 --- libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc.jj	2016-07-22 11:37:16.409402488 +0200
 +++ libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc	2016-07-22 11:37:16.409402488 +0200
-@@ -0,0 +1,38 @@
+@@ -0,0 +1,39 @@
 +// Copyright (C) 2012-2016 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -7310,7 +7353,8 @@
 +#include "../c++11/compatibility-thread-c++0x.cc"
 +
 +asm (".hidden _ZSt9call_onceIMSt6threadFvvEJSt17reference_wrapperIS0_EEEvRSt9once_flagOT_DpOT0_"); 
-+asm (".hidden _ZSt16__once_call_implISt12_Bind_simpleIFSt7_Mem_fnIMSt6threadFvvEESt17reference_wrapperIS2_EEEEvv"); 
++asm (".hidden _ZZSt9call_onceIMSt6threadFvvEJSt17reference_wrapperIS0_EEEvRSt9once_flagOT_DpOT0_ENKUlvE0_clEv");
++asm (".hidden _ZZSt9call_onceIMSt6threadFvvEJSt17reference_wrapperIS0_EEEvRSt9once_flagOT_DpOT0_ENUlvE0_4_FUNEv");
 +asm (".hidden _ZSt13__bind_simpleIMSt6threadFvvEJSt17reference_wrapperIS0_EEENSt19_Bind_simple_helperIT_JDpT0_EE6__typeEOS6_DpOS7_"); 
 +asm (".hidden _ZNSt13__future_base19_Async_state_common15_M_run_deferredEv"); 
 +asm (".hidden _ZNSt13__future_base7_ResultIvE10_M_destroyEv");
@@ -8250,34 +8294,34 @@
  int main()
  {
    typedef long long atomic_type;
-@@ -15573,7 +15575,7 @@ $as_echo "$as_me: WARNING: Performance o
+@@ -15575,7 +15577,7 @@ $as_echo "$as_me: WARNING: Performance o
    # unnecessary for this test.
  
      cat > conftest.$ac_ext << EOF
--#line 15576 "configure"
-+#line 15578 "configure"
+-#line 15578 "configure"
++#line 15580 "configure"
  int main()
  {
    _Decimal32 d1;
-@@ -15615,7 +15617,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+@@ -15617,7 +15619,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
    # unnecessary for this test.
  
      cat > conftest.$ac_ext << EOF
--#line 15618 "configure"
-+#line 15620 "configure"
+-#line 15620 "configure"
++#line 15622 "configure"
  template<typename T1, typename T2>
    struct same
    { typedef T2 type; };
-@@ -15649,7 +15651,7 @@ $as_echo "$enable_int128" >&6; }
+@@ -15651,7 +15653,7 @@ $as_echo "$enable_int128" >&6; }
      rm -f conftest*
  
      cat > conftest.$ac_ext << EOF
--#line 15652 "configure"
-+#line 15654 "configure"
+-#line 15654 "configure"
++#line 15656 "configure"
  template<typename T1, typename T2>
    struct same
    { typedef T2 type; };
-@@ -81358,6 +81360,11 @@ $as_echo "$gxx_include_dir" >&6; }
+@@ -81429,6 +81431,11 @@ $as_echo "$gxx_include_dir" >&6; }
  
  
  
@@ -8289,7 +8333,7 @@
  ac_config_files="$ac_config_files Makefile"
  
  ac_config_files="$ac_config_files scripts/testsuite_flags"
-@@ -81375,7 +81382,7 @@ ac_config_files="$ac_config_files doc/xs
+@@ -81446,7 +81453,7 @@ ac_config_files="$ac_config_files doc/xs
  # append it here.  Only modify Makefiles that have just been created.
  #
  # Also, get rid of this simulated-VPATH thing that automake does.
@@ -8298,7 +8342,7 @@
  
  
  ac_config_commands="$ac_config_commands generate-headers"
-@@ -82604,6 +82611,8 @@ do
+@@ -82675,6 +82682,8 @@ do
      "src/c++98/Makefile") CONFIG_FILES="$CONFIG_FILES src/c++98/Makefile" ;;
      "src/c++11/Makefile") CONFIG_FILES="$CONFIG_FILES src/c++11/Makefile" ;;
      "src/filesystem/Makefile") CONFIG_FILES="$CONFIG_FILES src/filesystem/Makefile" ;;
@@ -8307,7 +8351,7 @@
      "doc/Makefile") CONFIG_FILES="$CONFIG_FILES doc/Makefile" ;;
      "po/Makefile") CONFIG_FILES="$CONFIG_FILES po/Makefile" ;;
      "testsuite/Makefile") CONFIG_FILES="$CONFIG_FILES testsuite/Makefile" ;;
-@@ -84444,6 +84453,28 @@ _EOF
+@@ -84515,6 +84524,28 @@ _EOF
  s!`test -f '$<' || echo '$(srcdir)/'`!!
  _EOF
     sed -f vpsed$$ $ac_file > tmp$$

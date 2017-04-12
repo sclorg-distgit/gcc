@@ -1,9 +1,9 @@
 %{?scl:%global __strip %%{_scl_root}/usr/bin/strip}
 %{?scl:%global __objdump %%{_scl_root}/usr/bin/objdump}
 %{?scl:%scl_package gcc}
-%global DATE 20160916
-%global SVNREV 240184
-%global gcc_version 6.2.1
+%global DATE 20170216
+%global SVNREV 245503
+%global gcc_version 6.3.1
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %{release}, append them after %{gcc_release} on Release: line.
 %global gcc_release 3
@@ -115,7 +115,7 @@ BuildRequires: %{?scl_prefix}binutils >= 2.22.52.0.1
 # For testing
 BuildRequires: %{?scl_prefix}gdb >= 7.4.50
 %endif
-BuildRequires: zlib-devel, gettext, dejagnu, bison, flex, texinfo, sharutils
+BuildRequires: zlib-devel, gettext, dejagnu, bison, flex, texinfo, sharutils, gcc-gfortran
 BuildRequires: /usr/bin/pod2man
 %if 0%{?rhel} >= 7
 BuildRequires: texinfo-tex
@@ -939,6 +939,38 @@ done)
 
 rm -f rpm.doc/changelogs/gcc/ChangeLog.[1-9]
 find rpm.doc -name \*ChangeLog\* | xargs bzip2 -9
+mkdir libstdc++_compat_test
+cd libstdc++_compat_test
+readelf -Ws %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libstdc++.so.6 | sed -n '/\.symtab/,$d;/ UND /d;/@GLIBC_PRIVATE/d;/\(GLOBAL\|WEAK\|UNIQUE\)/p' | awk '{ if ($4 == "OBJECT") { printf "%s %s %s %s %s\n", $8, $4, $5, $6, $3 } else { printf "%s %s %s %s\n", $8, $4, $5, $6 }}' | sed 's/ UNIQUE / GLOBAL /;s/ WEAK / GLOBAL /;s/@@GLIBCXX_[0-9.]*//;s/@@CXXABI_TM_[0-9.]*//;s/@@CXXABI_FLOAT128//;s/@@CXXABI_[0-9.]*//' | LC_ALL=C sort -u > system.abilist
+readelf -Ws ../obj-%{gcc_target_platform}/%{gcc_target_platform}/libstdc++-v3/src/.libs/libstdc++.so.6 | sed -n '/\.symtab/,$d;/ UND /d;/@GLIBC_PRIVATE/d;/\(GLOBAL\|WEAK\|UNIQUE\)/p' | awk '{ if ($4 == "OBJECT") { printf "%s %s %s %s %s\n", $8, $4, $5, $6, $3 } else { printf "%s %s %s %s\n", $8, $4, $5, $6 }}' | sed 's/ UNIQUE / GLOBAL /;s/ WEAK / GLOBAL /;s/@@GLIBCXX_[0-9.]*//;s/@@CXXABI_TM_[0-9.]*//;s/@@CXXABI_FLOAT128//;s/@@CXXABI_[0-9.]*//' | LC_ALL=C sort -u > vanilla.abilist
+diff -up system.abilist vanilla.abilist | awk '/^\+\+\+/{next}/^\+/{print gensub(/^+(.*)$/,"\\1","1",$0)}' > system2vanilla.abilist.diff
+../obj-%{gcc_target_platform}/gcc/xgcc -B ../obj-%{gcc_target_platform}/gcc/ -shared -o libstdc++_nonshared.so -Wl,--whole-archive ../obj-%{gcc_target_platform}/%{gcc_target_platform}/libstdc++-v3/src/.libs/libstdc++_nonshared%{nonsharedver}.a -Wl,--no-whole-archive %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libstdc++.so.6
+readelf -Ws libstdc++_nonshared.so | sed -n '/\.symtab/,$d;/ UND /d;/@GLIBC_PRIVATE/d;/\(GLOBAL\|WEAK\|UNIQUE\)/p' | awk '{ if ($4 == "OBJECT") { printf "%s %s %s %s %s\n", $8, $4, $5, $6, $3 } else { printf "%s %s %s %s\n", $8, $4, $5, $6 }}' | sed 's/ UNIQUE / GLOBAL /;s/ WEAK / GLOBAL /;s/@@GLIBCXX_[0-9.]*//;s/@@CXXABI_TM_[0-9.]*//;s/@@CXXABI_FLOAT128//;s/@@CXXABI_[0-9.]*//' | LC_ALL=C sort -u > nonshared.abilist
+echo ====================NONSHARED=========================
+ldd -d -r ./libstdc++_nonshared.so || :
+ldd -u ./libstdc++_nonshared.so || :
+diff -up system2vanilla.abilist.diff nonshared.abilist || :
+echo ====================NONSHARED END=====================
+rm -f libstdc++_nonshared.so
+cd ..
+mkdir libgfortran_compat_test
+cd libgfortran_compat_test
+TEST_LIBQUADMATH=
+%if %{build_libquadmath}
+TEST_LIBQUADMATH=`pwd`/../obj-%{gcc_target_platform}/%{gcc_target_platform}/libquadmath/.libs/libquadmath.so.0
+%endif
+readelf -Ws %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libgfortran.so.3 | sed -n '/\.symtab/,$d;/ UND /d;/@GLIBC_PRIVATE/d;/\(GLOBAL\|WEAK\|UNIQUE\)/p' | awk '{ if ($4 == "OBJECT") { printf "%s %s %s %s %s\n", $8, $4, $5, $6, $3 } else { printf "%s %s %s %s\n", $8, $4, $5, $6 }}' | sed 's/ UNIQUE / GLOBAL /;s/ WEAK / GLOBAL /;s/@@GFORTRAN_[0-9.]*//;s/@@GFORTRAN_C99_TM_[0-9.]*//;s/@@GFORTRAN_C99_FLOAT128//;s/@@GFORTRAN_C99_[0-9.]*//' | LC_ALL=C sort -u > system.abilist
+readelf -Ws ../obj-%{gcc_target_platform}/%{gcc_target_platform}/libgfortran/.libs/libgfortran.so.3 | sed -n '/\.symtab/,$d;/ UND /d;/@GLIBC_PRIVATE/d;/\(GLOBAL\|WEAK\|UNIQUE\)/p' | awk '{ if ($4 == "OBJECT") { printf "%s %s %s %s %s\n", $8, $4, $5, $6, $3 } else { printf "%s %s %s %s\n", $8, $4, $5, $6 }}' | sed 's/ UNIQUE / GLOBAL /;s/ WEAK / GLOBAL /;s/@@GFORTRAN_[0-9.]*//;s/@@GFORTRAN_C99_TM_[0-9.]*//;s/@@GFORTRAN_C99_FLOAT128//;s/@@GFORTRAN_C99_[0-9.]*//' | LC_ALL=C sort -u > vanilla.abilist
+diff -up system.abilist vanilla.abilist | awk '/^\+\+\+/{next}/^\+/{print gensub(/^+(.*)$/,"\\1","1",$0)}' > system2vanilla.abilist.diff
+../obj-%{gcc_target_platform}/gcc/xgcc -B ../obj-%{gcc_target_platform}/gcc/ -shared -o libgfortran_nonshared.so -Wl,--whole-archive ../obj-%{gcc_target_platform}/%{gcc_target_platform}/libgfortran/.libs/libgfortran_nonshared%{nonsharedver}.a -Wl,--no-whole-archive %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libgfortran.so.3 $TEST_LIBQUADMATH
+readelf -Ws libgfortran_nonshared.so | sed -n '/\.symtab/,$d;/ UND /d;/@GLIBC_PRIVATE/d;/\(GLOBAL\|WEAK\|UNIQUE\)/p' | awk '{ if ($4 == "OBJECT") { printf "%s %s %s %s %s\n", $8, $4, $5, $6, $3 } else { printf "%s %s %s %s\n", $8, $4, $5, $6 }}' | sed 's/ UNIQUE / GLOBAL /;s/ WEAK / GLOBAL /;s/@@GFORTRAN_[0-9.]*//;s/@@GFORTRAN_C99_TM_[0-9.]*//;s/@@GFORTRAN_C99_FLOAT128//;s/@@GFORTRAN_C99_[0-9.]*//' | LC_ALL=C sort -u > nonshared.abilist
+echo ====================NONSHARED ========================
+ldd -d -r ./libgfortran_nonshared.so || :
+ldd -u ./libgfortran_nonshared.so || :
+diff -up system2vanilla.abilist.diff nonshared.abilist || :
+echo ====================NONSHARED END=====================
+rm -f libgfortran_nonshared.so
+cd ..
 
 %install
 rm -fr %{buildroot}
@@ -950,6 +982,9 @@ export PATH=`pwd`/obj-%{gcc_target_platform}/doxygen-install/bin/${PATH:+:${PATH
 %endif
 
 %{?scl:PATH=%{_bindir}${PATH:+:${PATH}}}
+# Also set LD_LIBRARY_PATH so that DTS eu-strip (called from find-debuginfo.sh)
+# can find the libraries it needs.
+%{?scl:export LD_LIBRARY_PATH=%{_libdir}${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}}
 
 perl -pi -e \
   's~href="l(ibstdc|atest)~href="http://gcc.gnu.org/onlinedocs/libstdc++/l\1~' \
@@ -2011,7 +2046,6 @@ fi
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/avx512vlintrin.h
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/clflushoptintrin.h
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/clwbintrin.h
-%{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/pcommitintrin.h
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/mwaitxintrin.h
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/xsavecintrin.h
 %{_prefix}/lib/gcc/%{gcc_target_platform}/%{gcc_version}/include/xsavesintrin.h
@@ -2596,6 +2630,21 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Mon Feb 20 2017 Marek Polacek <polacek@redhat.com> 6.3.1-3.1
+- use "export" when setting LD_LIBRARY_PATH (#1421107)
+
+* Thu Feb 16 2017 Jakub Jelinek  <jakub@redhat.com> 6.3.1-3
+- update from Fedora 6.3.1-3
+  - fix vec_xl and vec_xst altivec.h intrinsics (#1418397, PR target/79268)
+
+* Tue Feb 14 2017 Marek Polacek <polacek@redhat.com> 6.3.1-2.3
+- set LD_LIBRARY_PATH (#1421107)
+
+* Thu Jan 19 2017 Jakub Jelinek  <jakub@redhat.com> 6.3.1-2.2
+- update from Fedora 6.3.1-2
+- some further libstdc++_nonshared.a fixes for ppc, ppc64, ppc64le, s390
+  and s390x
+
 * Thu Oct 20 2016 Marek Polacek <polacek@redhat.com> 6.2.1-3.1
 - rename libasan2 to libasan3 (#1386146)
 - update old references to GCC 5
