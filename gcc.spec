@@ -1,13 +1,13 @@
 %{?scl:%global __strip %%{_scl_root}/usr/bin/strip}
 %{?scl:%global __objdump %%{_scl_root}/usr/bin/objdump}
 %{?scl:%scl_package gcc}
-%global DATE 20180626
-%global SVNREV 262161
+%global DATE 20180712
+%global SVNREV 262581
 %global gcc_version 8.1.1
 %global gcc_major 8
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %%{release}, append them after %%{gcc_release} on Release: line.
-%global gcc_release 4
+%global gcc_release 5
 %global mpc_version 0.8.1
 %global isl_version 0.16.1
 %global doxygen_version 1.8.0
@@ -24,7 +24,7 @@
 %else
 %global build_go 0
 %endif
-%ifarch %{ix86} x86_64 ia64 ppc64le
+%ifarch %{ix86} x86_64 ia64 ppc64 ppc64le
 %global build_libquadmath 1
 %else
 %global build_libquadmath 0
@@ -2470,5 +2470,9 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Thu Jul 12 2018 Marek Polacek <polacek@redhat.com> 8.1.1-5
+- enable libquadmath for ppc64
+- update from Fedora gcc-8.1.1-5
+
 * Mon Jul  9 2018 Marek Polacek <polacek@redhat.com> 8.1.1-4
 - new package
