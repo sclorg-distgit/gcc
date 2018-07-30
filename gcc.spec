@@ -1,13 +1,13 @@
 %{?scl:%global __strip %%{_scl_root}/usr/bin/strip}
 %{?scl:%global __objdump %%{_scl_root}/usr/bin/objdump}
 %{?scl:%scl_package gcc}
-%global DATE 20180626
-%global SVNREV 262161
+%global DATE 20180712
+%global SVNREV 262581
 %global gcc_version 8.1.1
 %global gcc_major 8
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %%{release}, append them after %%{gcc_release} on Release: line.
-%global gcc_release 4
+%global gcc_release 5
 %global mpc_version 0.8.1
 %global isl_version 0.16.1
 %global doxygen_version 1.8.0
@@ -24,10 +24,19 @@
 %else
 %global build_go 0
 %endif
+%if 0%{?rhel} == 7
+%ifarch %{ix86} x86_64 ia64 ppc ppc64 ppc64le
+%global build_libquadmath 1
+%else
+%global build_libquadmath 0
+%endif
+%endif
+%if 0%{?rhel} == 6
 %ifarch %{ix86} x86_64 ia64 ppc64le
 %global build_libquadmath 1
 %else
 %global build_libquadmath 0
+%endif
 %endif
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64
 %global build_libasan 1
@@ -81,7 +90,7 @@
 Summary: GCC version 8
 Name: %{?scl_prefix}gcc
 Version: %{gcc_version}
-Release: %{gcc_release}%{?dist}
+Release: %{gcc_release}.1%{?dist}
 # libgcc, libgfortran, libgomp, libstdc++ and crtstuff have
 # GCC Runtime Exception.
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
@@ -111,7 +120,7 @@ BuildRequires: glibc-static
 %if 0%{?scl:1}
 BuildRequires: %{?scl_prefix}binutils >= 2.22.52.0.1
 # For testing
-#BuildRequires: %{?scl_prefix}gdb >= 7.4.50
+BuildRequires: %{?scl_prefix}gdb >= 7.4.50
 %endif
 BuildRequires: zlib-devel, gettext, dejagnu, bison, flex, sharutils
 BuildRequires: texinfo, /usr/bin/pod2man
@@ -270,10 +279,10 @@ Patch3016: 0016-Allow-calls-to-intrinsics-with-smaller-types-than-sp.patch
 Patch3017: 0017-Add-the-SEQUENCE-attribute-by-default-if-it-s-not-pr.patch
 Patch3018: 0018-Fill-in-missing-array-dimensions-using-the-lower-bou.patch
 Patch3019: 0019-Add-tests-for-AUTOMATIC-keyword.patch
-Patch3020: 0020-Add-test-for-STRUCTURE-and-RECORD.patch
 Patch3022: 0022-Default-values-for-certain-field-descriptors-in-form.patch
 Patch3023: gcc8-fortranlines.patch
 Patch3024: gcc8-fortran-include.patch
+Patch3025: gcc8-fortran-equivalence.patch
 
 %if 0%{?rhel} >= 7
 %global nonsharedver 48
@@ -640,8 +649,6 @@ cd ..
 %endif
 %endif
 
-# Disable for now.
-%if 0
 %if 0%{?rhel} <= 7
 %patch3003 -p1 -b .fortran03~
 %patch3001 -p1 -b .fortran01~
@@ -661,11 +668,10 @@ cd ..
 %patch3017 -p1 -b .fortran17~
 %patch3018 -p1 -b .fortran18~
 %patch3019 -p1 -b .fortran19~
-%patch3020 -p1 -b .fortran20~
 %patch3022 -p1 -b .fortran22~
 %patch3023 -p1 -b .fortran23~
 %patch3024 -p1 -b .fortran24~
-%endif
+%patch3025 -p1 -b .fortran25~
 %endif
 
 echo 'Red Hat %{version}-%{gcc_release}' > gcc/DEV-PHASE
@@ -2472,5 +2478,13 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Mon Jul 16 2018 Jeff Law <law@redhat.com> 8.1.1-5.1
+- Revamp attribute checking for EQUIVALENCEs
+- Trivial testcase updates
+
+* Thu Jul 12 2018 Marek Polacek <polacek@redhat.com> 8.1.1-5
+- enable libquadmath for ppc64
+- update from Fedora gcc-8.1.1-5
+
 * Mon Jul  9 2018 Marek Polacek <polacek@redhat.com> 8.1.1-4
 - new package

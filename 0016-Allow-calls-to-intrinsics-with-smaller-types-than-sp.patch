@@ -12,8 +12,8 @@ This feature is enabled by the `-std=extra-legacy` compiler flag.
 diff -Nrup a/gcc/fortran/gfortran.h b/gcc/fortran/gfortran.h
 --- a/gcc/fortran/gfortran.h	2018-06-05 11:59:14.269337049 -0600
 +++ b/gcc/fortran/gfortran.h	2018-06-05 11:59:52.830081690 -0600
-@@ -646,6 +646,8 @@ enum gfc_reverse
-   GFC_INHIBIT_REVERSE
+@@ -656,6 +656,8 @@ enum gfc_param_spec_type
+   SPEC_DEFERRED
  };
  
 +enum match_type { MATCH_EXACT, MATCH_PROMOTABLE, MATCH_INVALID };

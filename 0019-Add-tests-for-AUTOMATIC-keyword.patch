@@ -18,43 +18,6 @@ may add some useful extra test coverage. Or they might not.
  create mode 100644 gcc/testsuite/gfortran.dg/automatic_repeat.f90
  create mode 100644 gcc/testsuite/gfortran.dg/automatic_save.f90
 
-diff --git a/gcc/testsuite/gfortran.dg/automatic_1.f90 b/gcc/testsuite/gfortran.dg/automatic_1.f90
-new file mode 100644
-index 0000000..910dcb1
---- /dev/null
-+++ b/gcc/testsuite/gfortran.dg/automatic_1.f90
-@@ -0,0 +1,31 @@
-+! { dg-do run }
-+! { dg-options "-O2 -fdec-static -fno-automatic" }
-+      subroutine foo (b)
-+        logical b
-+        integer i, j
-+        character*24 s
-+        automatic i
-+        if (b) then
-+          i = 26
-+          j = 131
-+          s = 'This is a test string'
-+        else
-+          if (i .eq. 26 .or. j .ne. 131) call abort
-+          if (s .ne. 'This is a test string') call abort
-+        end if
-+      end subroutine foo
-+      subroutine bar (s)
-+        character*42 s
-+        if (s .ne. '0123456789012345678901234567890123456') call abort
-+        call foo (.false.)
-+      end subroutine bar
-+      subroutine baz
-+        character*42 s
-+        ! Just clobber stack a little bit.
-+        s = '0123456789012345678901234567890123456'
-+        call bar (s)
-+      end subroutine baz
-+      call foo (.true.)
-+      call baz
-+      call foo (.false.)
-+      end
 diff --git a/gcc/testsuite/gfortran.dg/automatic_common.f90 b/gcc/testsuite/gfortran.dg/automatic_common.f90
 new file mode 100644
 index 0000000..5ec016f
@@ -66,34 +29,6 @@ index 0000000..5ec016f
 +! A common variable may not have the AUTOMATIC attribute.
 +INTEGER, AUTOMATIC :: X
 +COMMON /COM/ X ! { dg-error "conflicts with AUTOMATIC attribute" }
-+END
-diff --git a/gcc/testsuite/gfortran.dg/automatic_repeat.f90 b/gcc/testsuite/gfortran.dg/automatic_repeat.f90
-new file mode 100644
-index 0000000..5c3133a
---- /dev/null
-+++ b/gcc/testsuite/gfortran.dg/automatic_repeat.f90
-@@ -0,0 +1,8 @@
-+! { dg-do compile }
-+! { dg-options "-fdec-static" }
-+! An AUTOMATIC statement cannot duplicated
-+FUNCTION X()
-+REAL, AUTOMATIC, AUTOMATIC :: Y ! { dg-error "Duplicate AUTOMATIC attribute" }
-+y = 1
-+END FUNCTION X
-+END
-diff --git a/gcc/testsuite/gfortran.dg/automatic_save.f90 b/gcc/testsuite/gfortran.dg/automatic_save.f90
-new file mode 100644
-index 0000000..2455d20
---- /dev/null
-+++ b/gcc/testsuite/gfortran.dg/automatic_save.f90
-@@ -0,0 +1,8 @@
-+! { dg-do compile }
-+! { dg-options "-fdec-static" }
-+! An AUTOMATIC statement cannot be used with SAVE
-+FUNCTION X()
-+REAL, SAVE, AUTOMATIC :: Y ! { dg-error "AUTOMATIC attribute conflicts with SAVE attribute" }
-+y = 1
-+END FUNCTION X
 +END
 -- 
 2.9.5

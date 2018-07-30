@@ -14,16 +14,16 @@ diff --git a/gcc/fortran/arith.c b/gcc/fortran/arith.c
 index 8fa305c..fc1be48 100644
 --- a/gcc/fortran/arith.c
 +++ b/gcc/fortran/arith.c
-@@ -2514,7 +2514,7 @@ gfc_int2log (gfc_expr *src, int kind)
+@@ -2531,7 +2531,7 @@ gfc_character2character (gfc_expr *src,
+   return result;
  }
- 
  
 -/* Helper function to set the representation in a Hollerith conversion.  
 +/* Helper function to set the representation in a Hollerith conversion.
     This assumes that the ts.type and ts.kind of the result have already
     been set.  */
  
-@@ -2545,6 +2545,34 @@ hollerith2representation (gfc_expr *result, gfc_expr *src)
+@@ -2562,6 +2562,34 @@ hollerith2representation (gfc_expr *resu
  }
  
  
@@ -58,7 +58,7 @@ index 8fa305c..fc1be48 100644
  /* Convert Hollerith to integer. The constant will be padded or truncated.  */
  
  gfc_expr *
-@@ -2560,6 +2588,19 @@ gfc_hollerith2int (gfc_expr *src, int kind)
+@@ -2577,6 +2605,19 @@ gfc_hollerith2int (gfc_expr *src, int ki
    return result;
  }
  
@@ -82,14 +82,14 @@ diff --git a/gcc/fortran/arith.h b/gcc/fortran/arith.h
 index 9c623a4..3cd663b 100644
 --- a/gcc/fortran/arith.h
 +++ b/gcc/fortran/arith.h
-@@ -82,6 +82,7 @@ gfc_expr *gfc_hollerith2real (gfc_expr *, int);
- gfc_expr *gfc_hollerith2complex (gfc_expr *, int);
+@@ -83,6 +83,7 @@ gfc_expr *gfc_hollerith2complex (gfc_exp
  gfc_expr *gfc_hollerith2character (gfc_expr *, int);
  gfc_expr *gfc_hollerith2logical (gfc_expr *, int);
+ gfc_expr *gfc_character2character (gfc_expr *, int);
 +gfc_expr *gfc_character2int (gfc_expr *, int);
- 
+
  #endif /* GFC_ARITH_H  */
- 
+
 diff --git a/gcc/fortran/check.c b/gcc/fortran/check.c
 index 6e62d40..4f2d216 100644
 --- a/gcc/fortran/check.c
@@ -151,9 +151,9 @@ diff --git a/gcc/fortran/resolve.c b/gcc/fortran/resolve.c
 index 4bb88b4..84a4827 100644
 --- a/gcc/fortran/resolve.c
 +++ b/gcc/fortran/resolve.c
-@@ -3615,6 +3615,30 @@ logical_to_bitwise (gfc_expr *e)
-   return e;
+@@ -3804,6 +3804,30 @@ lookup_uop_fuzzy (const char *op, gfc_sy
  }
+ 
  
 +/* Return true if TYPE is character based, false otherwise.  */
 +
@@ -182,7 +182,7 @@ index 4bb88b4..84a4827 100644
  /* Resolve an operator expression node.  This can involve replacing the
     operation with a user defined function call.  */
  
-@@ -3781,6 +3805,38 @@ resolve_operator (gfc_expr *e)
+@@ -3976,6 +4000,38 @@ resolve_operator (gfc_expr *e)
      case INTRINSIC_EQ_OS:
      case INTRINSIC_NE:
      case INTRINSIC_NE_OS:
@@ -221,7 +221,7 @@ index 4bb88b4..84a4827 100644
        if (op1->ts.type == BT_CHARACTER && op2->ts.type == BT_CHARACTER
  	  && op1->ts.kind == op2->ts.kind)
  	{
-@@ -3789,6 +3845,29 @@ resolve_operator (gfc_expr *e)
+@@ -3984,6 +4040,29 @@ resolve_operator (gfc_expr *e)
  	  break;
  	}
  
@@ -251,7 +251,7 @@ index 4bb88b4..84a4827 100644
        if (gfc_numeric_ts (&op1->ts) && gfc_numeric_ts (&op2->ts))
  	{
  	  gfc_type_convert_binary (e, 1);
-@@ -3985,7 +4064,6 @@ bad_op:
+@@ -4188,7 +4267,6 @@ bad_op:
    return false;
  }
  
@@ -263,21 +263,15 @@ diff --git a/gcc/fortran/simplify.c b/gcc/fortran/simplify.c
 index 09da1d2..80c9637 100644
 --- a/gcc/fortran/simplify.c
 +++ b/gcc/fortran/simplify.c
-@@ -7144,6 +7144,14 @@ gfc_convert_constant (gfc_expr *e, bt type, int kind)
- 	}
+@@ -7989,6 +7989,8 @@ gfc_convert_constant (gfc_expr *e, bt ty
+     case BT_CHARACTER:
+       if (type == BT_CHARACTER)
+ 	f = gfc_character2character;
++      else if (type == BT_INTEGER)
++	f = gfc_character2int;
+       else
+ 	goto oops;
        break;
- 
-+   case BT_CHARACTER:
-+      if (type == BT_INTEGER)
-+	{
-+	  f = gfc_character2int;
-+	  break;
-+	}
-+      goto oops;
-+
-     default:
-     oops:
-       gfc_internal_error ("gfc_convert_constant(): Unexpected type");
 diff --git a/gcc/testsuite/gfortran.dg/hollerith-character-comparison.f90 b/gcc/testsuite/gfortran.dg/hollerith-character-comparison.f90
 new file mode 100644
 index 0000000..9c462b9

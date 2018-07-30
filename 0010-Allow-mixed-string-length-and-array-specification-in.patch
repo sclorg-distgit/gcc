@@ -20,7 +20,7 @@ diff --git a/gcc/fortran/decl.c b/gcc/fortran/decl.c
 index 6d3d28af127..c90f9de5a78 100644
 --- a/gcc/fortran/decl.c
 +++ b/gcc/fortran/decl.c
-@@ -2145,6 +2145,35 @@ check_function_name (char *name)
+@@ -2264,6 +2264,35 @@ check_function_name (char *name)
  }
  
  
@@ -56,16 +56,16 @@ index 6d3d28af127..c90f9de5a78 100644
  /* Match a variable name with an optional initializer.  When this
     subroutine is called, a variable is expected to be parsed next.
     Depending on what is happening at the moment, updates either the
-@@ -2154,7 +2183,7 @@ static match
- variable_decl (int elem)
+@@ -2274,7 +2303,7 @@ variable_decl (int elem)
  {
    char name[GFC_MAX_SYMBOL_LEN + 1];
+   static unsigned int fill_id = 0;
 -  gfc_expr *initializer, *char_len;
 +  gfc_expr *initializer;
    gfc_array_spec *as;
    gfc_array_spec *cp_as; /* Extra copy for Cray Pointees.  */
    gfc_charlen *cl;
-@@ -2163,6 +2192,7 @@ variable_decl (int elem)
+@@ -2283,6 +2312,7 @@ variable_decl (int elem)
    match m;
    bool t;
    gfc_symbol *sym;
@@ -73,7 +73,7 @@ index 6d3d28af127..c90f9de5a78 100644
  
    initializer = NULL;
    as = NULL;
-@@ -2177,6 +2207,20 @@ variable_decl (int elem)
+@@ -2335,6 +2365,20 @@ variable_decl (int elem)
  
    var_locus = gfc_current_locus;
  
@@ -94,7 +94,7 @@ index 6d3d28af127..c90f9de5a78 100644
    /* Now we could see the optional array spec. or character length.  */
    m = gfc_match_array_spec (&as, true, true);
    if (m == MATCH_ERROR)
-@@ -2268,40 +2312,12 @@ variable_decl (int elem)
+@@ -2453,40 +2497,12 @@ variable_decl (int elem)
  	}
      }
  
