@@ -8,7 +8,7 @@
 %global gcc_major 9
 # Note, gcc_release must be integer, if you want to add suffixes to
 # %%{release}, append them after %%{gcc_release} on Release: line.
-%global gcc_release 1
+%global gcc_release 2
 %global nvptx_tools_gitrev c28050f60193b3b95a18866a96f03334e874e78f
 %global nvptx_newlib_gitrev aadc8eb0ec43b7cd0dd2dfb484bae63c8b05ef24
 %global mpc_version 0.8.1
@@ -57,7 +57,12 @@
 %endif
 %endif
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64
+%if 0%{?rhel} <= 7
 %global build_libasan 1
+%else
+# GTS 9 libasan5 would clash with the system RHEL 8 libasan.
+%global build_libasan 0
+%endif
 %else
 %global build_libasan 0
 %endif
@@ -72,7 +77,12 @@
 %global build_liblsan 0
 %endif
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64
+%if 0%{?rhel} <= 7
 %global build_libubsan 1
+%else
+# GTS 9 libubsan1 would clash with the system RHEL 8 libubsan.
+%global build_libubsan 0
+%endif
 %else
 %global build_libubsan 0
 %endif
@@ -113,7 +123,7 @@
 Summary: GCC version 9
 Name: %{?scl_prefix}gcc
 Version: %{gcc_version}
-Release: %{gcc_release}.1%{?dist}
+Release: %{gcc_release}%{?dist}
 # libgcc, libgfortran, libgomp, libstdc++ and crtstuff have
 # GCC Runtime Exception.
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
@@ -547,10 +557,10 @@ which is used for -fsanitize=address instrumented programs.
 
 %package -n %{?scl_prefix}libasan-devel
 Summary: The Address Sanitizer static library
-%if 0%{?rhel} > 8
-Requires: libasan%{_isa} >= 9.1.1
+%if 0%{?rhel} > 7
+Requires: libasan%{_isa} >= 8.3.1
 %else
-Requires: libasan5%{_isa} >= 9.1.1
+Requires: libasan5%{_isa} >= 8.3.1
 %endif
 
 %description -n %{?scl_prefix}libasan-devel
@@ -583,10 +593,10 @@ which is used for -fsanitize=undefined instrumented programs.
 
 %package -n %{?scl_prefix}libubsan-devel
 Summary: The Undefined Behavior Sanitizer static library
-%if 0%{?rhel} > 8
-Requires: libubsan%{_isa} >= 9.1.1
+%if 0%{?rhel} > 7
+Requires: libubsan%{_isa} >= 8.3.1
 %else
-Requires: libubsan1%{_isa} >= 9.1.1
+Requires: libubsan1%{_isa} >= 8.3.1
 %endif
 
 %description -n %{?scl_prefix}libubsan-devel
@@ -2497,6 +2507,9 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Fri Jul 19 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2
+- fix Release
+
 * Thu Jul 18 2019 Marek Polacek <polacek@redhat.com> 9.1.1-1.1
 - fix out-of-ssa with unsupported vector types (PR rtl-optimization/90756,
   #1727979)
