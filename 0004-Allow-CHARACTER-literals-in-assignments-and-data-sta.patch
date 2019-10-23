@@ -516,7 +516,7 @@ index 00000000000..0ec494c4a92
 --- /dev/null
 +++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_3.f90
 @@ -0,0 +1,61 @@
-+! { dg-do run }
++! { dg-do compile }
 +! { dg-options "-fdec -fno-dec-char-conversions" }
 +!
 +! Modified by Mark Eggleston <mark.eggleston@codethink.com>
@@ -733,7 +733,7 @@ index 00000000000..e7d084b5ffc
 --- /dev/null
 +++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_3.f90
 @@ -0,0 +1,69 @@
-+! { dg-do run }
++! { dg-do compile }
 +! { dg-options "-fdec -fno-dec-char-conversions" }
 +!
 +! Modified by Mark Eggleston <mark.eggleston@codethink.com>

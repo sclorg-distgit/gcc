@@ -372,7 +372,7 @@ index 00000000000..9b27fc4d502
 --- /dev/null
 +++ b/gcc/testsuite/gfortran.dg/dec-comparison-complex_3.f90
 @@ -0,0 +1,22 @@
-+! { dg-do run }
++! { dg-do compile }
 +! { dg-options "-std=legacy -fdec -fno-dec-comparisons -Wconversion" }
 +!
 +! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
@@ -575,7 +575,7 @@ index 00000000000..111c648f08c
 --- /dev/null
 +++ b/gcc/testsuite/gfortran.dg/dec-comparison-real_3.f90
 @@ -0,0 +1,31 @@
-+! { dg-do run }
++! { dg-do compile }
 +! { dg-options "-std=legacy -fdec -fno-dec-comparisons -Wconversion" }
 +!
 +! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
@@ -612,7 +612,7 @@ index 00000000000..b0b28e55111
 --- /dev/null
 +++ b/gcc/testsuite/gfortran.dg/dec-comparison.f90
 @@ -0,0 +1,41 @@
-+! { dg-do run }
++! { dg-do compile }
 +! { dg-options "-fdec" }
 +!
 +! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>

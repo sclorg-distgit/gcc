@@ -57,12 +57,7 @@
 %endif
 %endif
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64
-%if 0%{?rhel} <= 7
 %global build_libasan 1
-%else
-# GTS 9 libasan5 would clash with the system RHEL 8 libasan.
-%global build_libasan 0
-%endif
 %else
 %global build_libasan 0
 %endif
@@ -77,12 +72,7 @@
 %global build_liblsan 0
 %endif
 %ifarch %{ix86} x86_64 ppc ppc64 ppc64le ppc64p7 s390 s390x %{arm} aarch64
-%if 0%{?rhel} <= 7
 %global build_libubsan 1
-%else
-# GTS 9 libubsan1 would clash with the system RHEL 8 libubsan.
-%global build_libubsan 0
-%endif
 %else
 %global build_libubsan 0
 %endif
@@ -123,7 +113,7 @@
 Summary: GCC version 9
 Name: %{?scl_prefix}gcc
 Version: %{gcc_version}
-Release: %{gcc_release}%{?dist}
+Release: %{gcc_release}.2%{?dist}
 # libgcc, libgfortran, libgomp, libstdc++ and crtstuff have
 # GCC Runtime Exception.
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
@@ -535,16 +525,6 @@ Requires: libatomic%{_isa} >= 4.8.0
 %description -n %{?scl_prefix}libatomic-devel
 This package contains GNU Atomic static libraries.
 
-%package -n libasan
-Summary: The Address Sanitizer runtime library from GCC 9
-Group: System Environment/Libraries
-Requires(post): /sbin/install-info
-Requires(preun): /sbin/install-info
-
-%description -n libasan
-This package contains the Address Sanitizer library from GCC 9
-which is used for -fsanitize=address instrumented programs.
-
 %package -n libasan5
 Summary: The Address Sanitizer runtime library from GCC 9
 Group: System Environment/Libraries
@@ -559,6 +539,7 @@ which is used for -fsanitize=address instrumented programs.
 Summary: The Address Sanitizer static library
 %if 0%{?rhel} > 7
 Requires: libasan%{_isa} >= 8.3.1
+Obsoletes: libasan5
 %else
 Requires: libasan5%{_isa} >= 8.3.1
 %endif
@@ -595,6 +576,7 @@ which is used for -fsanitize=undefined instrumented programs.
 Summary: The Undefined Behavior Sanitizer static library
 %if 0%{?rhel} > 7
 Requires: libubsan%{_isa} >= 8.3.1
+Obsoletes: libubsan1
 %else
 Requires: libubsan1%{_isa} >= 8.3.1
 %endif
@@ -1865,10 +1847,6 @@ fi
 
 %postun -n libatomic -p /sbin/ldconfig
 
-%post -n libasan -p /sbin/ldconfig
-
-%postun -n libasan -p /sbin/ldconfig
-
 %post -n libasan5 -p /sbin/ldconfig
 
 %postun -n libasan5 -p /sbin/ldconfig
@@ -2401,8 +2379,11 @@ fi
 %endif
 
 %if %{build_libasan}
+# GTS 9 libasan5 would clash with the system RHEL 8 libasan.
+%if 0%{?rhel} < 8
 %files -n libasan5
 %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libasan.so.5*
+%endif
 
 %files -n %{?scl_prefix}libasan-devel
 %dir %{_prefix}/lib/gcc
@@ -2441,8 +2422,11 @@ fi
 %endif
 
 %if %{build_libubsan}
+# GTS 9 libubsan1 would clash with the system RHEL 8 libubsan.
+%if 0%{?rhel} < 8
 %files -n libubsan1
 %{?scl:%{_root_prefix}}%{!?scl:%{_prefix}}/%{_lib}/libubsan.so.1*
+%endif
 
 %files -n %{?scl_prefix}libubsan-devel
 %dir %{_prefix}/lib/gcc
@@ -2507,6 +2491,12 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Mon Jul 22 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2.2
+- small fixes for the Fortran patches (#1728355)
+
+* Mon Jul 22 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2.1
+- updates from GTS 9 gcc
+
 * Fri Jul 19 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2
 - fix Release
 
