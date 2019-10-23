@@ -113,7 +113,7 @@
 Summary: GCC version 9
 Name: %{?scl_prefix}gcc
 Version: %{gcc_version}
-Release: %{gcc_release}.2%{?dist}
+Release: %{gcc_release}.5%{?dist}
 # libgcc, libgfortran, libgomp, libstdc++ and crtstuff have
 # GCC Runtime Exception.
 License: GPLv3+ and GPLv3+ with exceptions and GPLv2+ with exceptions and LGPLv2+ and BSD
@@ -135,12 +135,13 @@ URL: http://gcc.gnu.org
 # Need binutils which support --build-id >= 2.17.50.0.17-3
 # Need binutils which support %%gnu_unique_object >= 2.19.51.0.14
 # Need binutils which support .cfi_sections >= 2.19.51.0.14-33
+# Need binutils which support new PowerPC relocs >= 2.31
 BuildRequires: binutils >= 2.19.51.0.14-33
 # While gcc doesn't include statically linked binaries, during testing
 # -static is used several times.
 BuildRequires: glibc-static
 %if 0%{?scl:1}
-BuildRequires: %{?scl_prefix}binutils >= 2.22.52.0.1
+BuildRequires: %{?scl_prefix}binutils >= 2.31
 # For testing
 %if 0%{?rhel} >= 6
 # FIXME gcc-toolset-9-gdb isn't yet in the buildroot.
@@ -261,7 +262,7 @@ Provides: liblto_plugin.so.0
 %global oformat OUTPUT_FORMAT(elf64-littleaarch64)
 %endif
 %if 0%{?rhel} == 6
-ExclusiveArch: x86_64
+ExclusiveArch: x86_64 %{ix86}
 %endif
 
 Patch0: gcc9-hack.patch
@@ -762,10 +763,7 @@ ln -sf libisl.so.15 libisl.so
 cd ../..
 %endif
 
-# Disable for now.
-%if 0%{?rhel} == 6
 %{?scl:PATH=%{_bindir}${PATH:+:${PATH}}}
-%endif
 
 CC=gcc
 CXX=g++
@@ -2491,6 +2489,15 @@ fi
 %doc rpm.doc/changelogs/libcc1/ChangeLog*
 
 %changelog
+* Thu Aug 22 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2.5
+- also build on i686
+
+* Thu Aug 15 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2.4
+- require binutils >= 2.31 so that gcc supports -mpltseq
+
+* Fri Aug  9 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2.3
+- fix visibility of symbols in gcc9-libstdc++-compat.patch (#1738677)
+
 * Mon Jul 22 2019 Marek Polacek <polacek@redhat.com> 9.1.1-2.2
 - small fixes for the Fortran patches (#1728355)
 

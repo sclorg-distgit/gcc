@@ -4394,14 +4394,14 @@
 +#undef _GLIBCXX_HAVE_AS_SYMVER_DIRECTIVE
 +#include "../c++11/future.cc"
 +const std::error_category* _ZSt15future_category = &__future_category_instance();
-+asm (".hidden _ZNSt13__future_base11_State_base15_M_run_deferredEv");
-+asm (".hidden _ZTSNSt13__future_base11_State_baseE");
 +asm (".hidden _ZTSNSt13__future_base12_Result_baseE");
 +asm (".hidden _ZNSt15_Sp_counted_ptrIDnLN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv");
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv");
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_releaseEv");
 +asm (".hidden _ZSt16__at_thread_exitPSt20__at_thread_exit_elt");
 +asm (".hidden _ZNSt13__future_base13_State_baseV211_Make_ready6_S_runEPv");
++asm (".hidden _ZNSt12future_errorC1ESt10error_code");
++asm (".hidden _ZNSt12future_errorC2ESt10error_code");
 --- libstdc++-v3/src/nonshared11/cow-string-inst80.cc.jj	2019-05-14 13:33:19.534538731 +0200
 +++ libstdc++-v3/src/nonshared11/cow-string-inst80.cc	2019-05-14 13:37:42.380149925 +0200
 @@ -0,0 +1,24 @@
@@ -4605,7 +4605,7 @@
 +asm (".hidden _ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_releaseEv");
 --- libstdc++-v3/src/nonshared11/cxx11-ios_failure.cc.jj	2019-05-13 10:20:36.306517068 +0200
 +++ libstdc++-v3/src/nonshared11/cxx11-ios_failure.cc	2019-05-14 16:51:50.918624561 +0200
-@@ -0,0 +1,36 @@
+@@ -0,0 +1,37 @@
 +// Copyright (C) 2012-2019 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -4642,6 +4642,7 @@
 +asm (".hidden _ZTSSt19__iosfail_type_info");
 +asm (".hidden _ZTVSt13__ios_failure");
 +asm (".hidden _ZTVSt19__iosfail_type_info");
++asm (".hidden _ZSt19__throw_ios_failurePKc");
 --- libstdc++-v3/src/nonshared11/new_opvant.cc.jj	2019-05-13 10:20:36.306517068 +0200
 +++ libstdc++-v3/src/nonshared11/new_opvant.cc	2019-05-13 10:20:36.306517068 +0200
 @@ -0,0 +1,23 @@
@@ -6385,7 +6386,7 @@
 +#include "cow-sstream-inst.cc"
 --- libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc.jj	2019-05-13 10:20:36.309517018 +0200
 +++ libstdc++-v3/src/nonshared11/compatibility-thread-c++0x.cc	2019-05-14 16:50:55.673547996 +0200
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,41 @@
 +// Copyright (C) 2012-2019 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -6425,6 +6426,8 @@
 +asm (".hidden _ZZSt9call_onceIMSt6threadFvvEJPS0_EEvRSt9once_flagOT_DpOT0_ENUlvE0_4_FUNEv");
 +asm (".hidden _ZNSt13__future_base19_Async_state_common15_M_run_deferredEv"); 
 +asm (".hidden _ZNSt13__future_base7_ResultIvE10_M_destroyEv");
++asm (".hidden _ZNSt13__future_base11_State_base15_M_run_deferredEv");
++asm (".hidden _ZTSNSt13__future_base11_State_baseE");
 --- libstdc++-v3/src/nonshared11/locale-inst.cc.jj	2019-05-13 10:20:36.309517018 +0200
 +++ libstdc++-v3/src/nonshared11/locale-inst.cc	2019-05-14 17:24:20.802045668 +0200
 @@ -0,0 +1,91 @@
@@ -6726,7 +6729,7 @@
 +asm (".hidden _ZNSt7__cxx1115basic_stringbufIwSt11char_traitsIwESaIwEED2Ev");
 --- libstdc++-v3/src/nonshared11/ios.cc.jj	2019-05-13 10:20:36.309517018 +0200
 +++ libstdc++-v3/src/nonshared11/ios.cc	2019-05-13 10:20:36.309517018 +0200
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,30 @@
 +// Iostreams base classes -*- C++ -*-
 +
 +// Copyright (C) 1997-2019 Free Software Foundation, Inc.
@@ -6757,8 +6760,6 @@
 +
 +#define _GLIBCXX_NONSHARED_CXX11
 +#include "../c++11/ios.cc"
-+
-+asm (".hidden _ZSt19__throw_ios_failurePKc");
 --- libstdc++-v3/src/nonshared11/Makefile.am.jj	2019-05-13 10:20:36.309517018 +0200
 +++ libstdc++-v3/src/nonshared11/Makefile.am	2019-05-14 15:55:26.842188962 +0200
 @@ -0,0 +1,251 @@
@@ -9159,7 +9160,7 @@
 +#include "../libsupc++/del_opva.cc"
 --- libstdc++-v3/src/nonshared11/functexcept.cc.jj	2019-05-13 10:20:36.312516968 +0200
 +++ libstdc++-v3/src/nonshared11/functexcept.cc	2019-05-13 10:20:36.312516968 +0200
-@@ -0,0 +1,72 @@
+@@ -0,0 +1,70 @@
 +// Copyright (C) 2001-2019 Free Software Foundation, Inc.
 +//
 +// This file is part of the GNU ISO C++ Library.  This library is free
@@ -9230,8 +9231,6 @@
 +
 +_GLIBCXX_END_NAMESPACE_VERSION
 +} // namespace
-+asm (".hidden _ZNSt12future_errorC1ESt10error_code");
-+asm (".hidden _ZNSt12future_errorC2ESt10error_code");
 --- libstdc++-v3/src/nonshared11/cxx11-ios_failure80.cc.jj	2019-05-14 15:34:40.267016992 +0200
 +++ libstdc++-v3/src/nonshared11/cxx11-ios_failure80.cc	2019-05-14 16:52:01.167453250 +0200
 @@ -0,0 +1,24 @@
