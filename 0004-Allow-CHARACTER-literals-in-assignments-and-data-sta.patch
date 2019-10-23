@@ -1,0 +1,860 @@
+From c1d6c81730ffda61eff8fccf4d0c7efa3ae6fd8d Mon Sep 17 00:00:00 2001
+From: Jim MacArthur <jim.macarthur@codethink.co.uk>
+Date: Thu, 4 Feb 2016 17:18:30 +0000
+Subject: [PATCH 04/16] Allow CHARACTER literals in assignments and data
+ statements
+
+Warnings are raised when this happens.
+
+Enable using -fdec-char-as-int or -fdec
+---
+ gcc/fortran/arith.c                                | 96 +++++++++++++++++++++-
+ gcc/fortran/arith.h                                |  4 +
+ gcc/fortran/expr.c                                 |  5 ++
+ gcc/fortran/intrinsic.c                            | 32 +++++++-
+ gcc/fortran/lang.opt                               |  5 ++
+ gcc/fortran/options.c                              |  1 +
+ gcc/fortran/resolve.c                              | 11 ++-
+ gcc/fortran/simplify.c                             | 29 ++++++-
+ gcc/fortran/trans-const.c                          |  3 +-
+ .../dec_char_conversion_in_assignment_1.f90        | 61 ++++++++++++++
+ .../dec_char_conversion_in_assignment_2.f90        | 61 ++++++++++++++
+ .../dec_char_conversion_in_assignment_3.f90        | 61 ++++++++++++++
+ .../gfortran.dg/dec_char_conversion_in_data_1.f90  | 69 ++++++++++++++++
+ .../gfortran.dg/dec_char_conversion_in_data_2.f90  | 69 ++++++++++++++++
+ .../gfortran.dg/dec_char_conversion_in_data_3.f90  | 69 ++++++++++++++++
+ gcc/testsuite/gfortran.dg/hollerith5.f90           |  5 +-
+ gcc/testsuite/gfortran.dg/hollerith_legacy.f90     |  2 +-
+ .../gfortran.dg/no_char_to_int_assign.f90          | 20 +++++
+ 18 files changed, 589 insertions(+), 14 deletions(-)
+ create mode 100644 gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_1.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_2.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_3.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_1.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_2.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_3.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/no_char_to_int_assign.f90
+
+diff --git a/gcc/fortran/arith.c b/gcc/fortran/arith.c
+index f2d311c044c..7e6d6dd3bb8 100644
+--- a/gcc/fortran/arith.c
++++ b/gcc/fortran/arith.c
+@@ -2553,11 +2553,11 @@ hollerith2representation (gfc_expr *result, gfc_expr *src)
+   src_len = src->representation.length - src->ts.u.pad;
+   gfc_target_expr_size (result, &result_len);
+ 
+-  if (src_len > result_len)
++  if (src_len > result_len && warn_character_truncation)
+     {
+-      gfc_warning (0,
+-		   "The Hollerith constant at %L is too long to convert to %qs",
+-		   &src->where, gfc_typename(&result->ts));
++      gfc_warning (OPT_Wcharacter_truncation, "The Hollerith constant at %L "
++		   "is truncated in conversion to %qs", &src->where,
++		   gfc_typename(&result->ts));
+     }
+ 
+   result->representation.string = XCNEWVEC (char, result_len + 1);
+@@ -2572,6 +2572,36 @@ hollerith2representation (gfc_expr *result, gfc_expr *src)
+ }
+ 
+ 
++/* Helper function to set the representation in a character conversion.
++   This assumes that the ts.type and ts.kind of the result have already
++   been set.  */
++
++static void
++character2representation (gfc_expr *result, gfc_expr *src)
++{
++  size_t src_len, result_len;
++  int i;
++  src_len = src->value.character.length;
++  gfc_target_expr_size (result, &result_len);
++
++  if (src_len > result_len && warn_character_truncation)
++    gfc_warning (OPT_Wcharacter_truncation, "The character constant at %L is "
++		 "is truncated in conversion to %s", &src->where,
++		 gfc_typename(&result->ts));
++
++  result->representation.string = XCNEWVEC (char, result_len + 1);
++
++  for (i = 0; i < MIN (result_len, src_len); i++)
++    result->representation.string[i] = (char) src->value.character.string[i];
++
++  if (src_len < result_len)
++    memset (&result->representation.string[src_len], ' ',
++	    result_len - src_len);
++
++  result->representation.string[result_len] = '\0'; /* For debugger  */
++  result->representation.length = result_len;
++}
++
+ /* Convert Hollerith to integer. The constant will be padded or truncated.  */
+ 
+ gfc_expr *
+@@ -2587,6 +2617,19 @@ gfc_hollerith2int (gfc_expr *src, int kind)
+   return result;
+ }
+ 
++/* Convert character to integer. The constant will be padded or truncated. */
++
++gfc_expr *
++gfc_character2int (gfc_expr *src, int kind)
++{
++  gfc_expr *result;
++  result = gfc_get_constant_expr (BT_INTEGER, kind, &src->where);
++
++  character2representation (result, src);
++  gfc_interpret_integer (kind, (unsigned char *) result->representation.string,
++			 result->representation.length, result->value.integer);
++  return result;
++}
+ 
+ /* Convert Hollerith to real. The constant will be padded or truncated.  */
+ 
+@@ -2603,6 +2646,21 @@ gfc_hollerith2real (gfc_expr *src, int kind)
+   return result;
+ }
+ 
++/* Convert character to real. The constant will be padded or truncated.  */
++
++gfc_expr *
++gfc_character2real (gfc_expr *src, int kind)
++{
++  gfc_expr *result;
++  result = gfc_get_constant_expr (BT_REAL, kind, &src->where);
++
++  character2representation (result, src);
++  gfc_interpret_float (kind, (unsigned char *) result->representation.string,
++		       result->representation.length, result->value.real);
++
++  return result;
++}
++
+ 
+ /* Convert Hollerith to complex. The constant will be padded or truncated.  */
+ 
+@@ -2619,6 +2677,21 @@ gfc_hollerith2complex (gfc_expr *src, int kind)
+   return result;
+ }
+ 
++/* Convert character to complex. The constant will be padded or truncated.  */
++
++gfc_expr *
++gfc_character2complex (gfc_expr *src, int kind)
++{
++  gfc_expr *result;
++  result = gfc_get_constant_expr (BT_COMPLEX, kind, &src->where);
++
++  character2representation (result, src);
++  gfc_interpret_complex (kind, (unsigned char *) result->representation.string,
++			 result->representation.length, result->value.complex);
++
++  return result;
++}
++
+ 
+ /* Convert Hollerith to character.  */
+ 
+@@ -2654,3 +2727,18 @@ gfc_hollerith2logical (gfc_expr *src, int kind)
+ 
+   return result;
+ }
++
++/* Convert character to logical. The constant will be padded or truncated.  */
++
++gfc_expr *
++gfc_character2logical (gfc_expr *src, int kind)
++{
++  gfc_expr *result;
++  result = gfc_get_constant_expr (BT_LOGICAL, kind, &src->where);
++
++  character2representation (result, src);
++  gfc_interpret_logical (kind, (unsigned char *) result->representation.string,
++			 result->representation.length, &result->value.logical);
++
++  return result;
++}
+diff --git a/gcc/fortran/arith.h b/gcc/fortran/arith.h
+index e06c7059885..13ffd8d0b6c 100644
+--- a/gcc/fortran/arith.h
++++ b/gcc/fortran/arith.h
+@@ -82,7 +82,11 @@ gfc_expr *gfc_hollerith2real (gfc_expr *, int);
+ gfc_expr *gfc_hollerith2complex (gfc_expr *, int);
+ gfc_expr *gfc_hollerith2character (gfc_expr *, int);
+ gfc_expr *gfc_hollerith2logical (gfc_expr *, int);
++gfc_expr *gfc_character2int (gfc_expr *, int);
++gfc_expr *gfc_character2real (gfc_expr *, int);
++gfc_expr *gfc_character2complex (gfc_expr *, int);
+ gfc_expr *gfc_character2character (gfc_expr *, int);
++gfc_expr *gfc_character2logical (gfc_expr *, int);
+ 
+ #endif /* GFC_ARITH_H  */
+ 
+diff --git a/gcc/fortran/expr.c b/gcc/fortran/expr.c
+index 474e9ecc401..77600a5f2e8 100644
+--- a/gcc/fortran/expr.c
++++ b/gcc/fortran/expr.c
+@@ -3695,6 +3695,11 @@ gfc_check_assign (gfc_expr *lvalue, gfc_expr *rvalue, int conform,
+ 	  || rvalue->ts.type == BT_HOLLERITH)
+ 	return true;
+ 
++      if (flag_dec_char_conversions && (gfc_numeric_ts (&lvalue->ts)
++	  || lvalue->ts.type == BT_LOGICAL)     
++          && rvalue->ts.type == BT_CHARACTER)
++	return true;
++
+       if (lvalue->ts.type == BT_LOGICAL && rvalue->ts.type == BT_LOGICAL)
+ 	return true;
+ 
+diff --git a/gcc/fortran/intrinsic.c b/gcc/fortran/intrinsic.c
+index c21fbddd5fb..e94d5d3225f 100644
+--- a/gcc/fortran/intrinsic.c
++++ b/gcc/fortran/intrinsic.c
+@@ -4017,6 +4017,28 @@ add_conversions (void)
+ 	  add_conv (BT_LOGICAL, gfc_logical_kinds[j].kind,
+ 		    BT_INTEGER, gfc_integer_kinds[i].kind, GFC_STD_LEGACY);
+ 	}
++
++  /* Flang allows character conversions similar to Hollerith conversions
++     - the first characters will be turned into ascii values. */
++  if (flag_dec_char_conversions)
++    {
++      /* Character-Integer conversions.  */
++      for (i = 0; gfc_integer_kinds[i].kind != 0; i++)
++	add_conv (BT_CHARACTER, gfc_default_character_kind,
++		  BT_INTEGER, gfc_integer_kinds[i].kind, GFC_STD_LEGACY);
++      /* Character-Real conversions.  */
++      for (i = 0; gfc_real_kinds[i].kind != 0; i++)
++	add_conv (BT_CHARACTER, gfc_default_character_kind,
++		  BT_REAL, gfc_real_kinds[i].kind, GFC_STD_LEGACY);
++      /* Character-Complex conversions.  */
++      for (i = 0; gfc_real_kinds[i].kind != 0; i++)
++	add_conv (BT_CHARACTER, gfc_default_character_kind,
++		  BT_COMPLEX, gfc_real_kinds[i].kind, GFC_STD_LEGACY);
++      /* Character-Logical conversions.  */
++      for (i = 0; gfc_logical_kinds[i].kind != 0; i++)
++	add_conv (BT_CHARACTER, gfc_default_character_kind,
++		  BT_LOGICAL, gfc_logical_kinds[i].kind, GFC_STD_LEGACY);
++    }
+ }
+ 
+ 
+@@ -5128,8 +5150,16 @@ gfc_convert_type_warn (gfc_expr *expr, gfc_typespec *ts, int eflag, int wflag)
+ 			     gfc_typename (&from_ts), gfc_typename (ts),
+ 			     &expr->where);
+ 	}
++      else if (flag_dec_char_conversions && from_ts.type == BT_CHARACTER
++	       && (gfc_numeric_ts (ts) || ts->type == BT_LOGICAL))
++	{
++	  if (warn_conversion)
++	    gfc_warning_now (OPT_Wconversion, "Conversion from %s to %s at %L",
++			     gfc_typename (&from_ts), gfc_typename (ts),
++			     &expr->where);
++	}
+       else
+-        gcc_unreachable ();
++	gcc_unreachable ();
+     }
+ 
+   /* Insert a pre-resolved function call to the right function.  */
+diff --git a/gcc/fortran/lang.opt b/gcc/fortran/lang.opt
+index 13a8e9778bb..5746b99b1d4 100644
+--- a/gcc/fortran/lang.opt
++++ b/gcc/fortran/lang.opt
+@@ -444,6 +444,11 @@ fdec-duplicates
+ Fortran Var(flag_dec_duplicates)
+ Allow varibles to be duplicated in the type specification matches.
+ 
++fdec-char-conversions
++Fortran Var(flag_dec_char_conversions)
++Enable the use of character literals in assignments and data statements
++for non-character variables.
++
+ fdec-include
+ Fortran Var(flag_dec_include)
+ Enable legacy parsing of INCLUDE as statement.
+diff --git a/gcc/fortran/options.c b/gcc/fortran/options.c
+index f93db8b6d7c..e97b1568810 100644
+--- a/gcc/fortran/options.c
++++ b/gcc/fortran/options.c
+@@ -76,6 +76,7 @@ set_dec_flags (int value)
+   SET_BITFLAG (flag_dec_include, value, value);
+   SET_BITFLAG (flag_dec_format_defaults, value, value);
+   SET_BITFLAG (flag_dec_duplicates, value, value);
++  SET_BITFLAG (flag_dec_char_conversions, value, value);
+ }
+ 
+ /* Finalize DEC flags.  */
+diff --git a/gcc/fortran/resolve.c b/gcc/fortran/resolve.c
+index 32b8d504ff6..43559185481 100644
+--- a/gcc/fortran/resolve.c
++++ b/gcc/fortran/resolve.c
+@@ -4320,7 +4320,6 @@ bad_op:
+   return false;
+ }
+ 
+-
+ /************** Array resolution subroutines **************/
+ 
+ enum compare_result
+@@ -10498,6 +10497,16 @@ resolve_ordinary_assign (gfc_code *code, gfc_namespace *ns)
+   lhs = code->expr1;
+   rhs = code->expr2;
+ 
++  if ((gfc_numeric_ts (&lhs->ts) || lhs->ts.type == BT_LOGICAL)
++      && rhs->ts.type == BT_CHARACTER
++      && rhs->expr_type != EXPR_CONSTANT)
++    {
++      gfc_error ("Cannot convert CHARACTER into %s at %L",
++                 gfc_typename (&lhs->ts),     
++                 &rhs->where);
++      return false;
++    }
++
+   if (rhs->is_boz
+       && !gfc_notify_std (GFC_STD_GNU, "BOZ literal at %L outside "
+ 			  "a DATA statement and outside INT/REAL/DBLE/CMPLX",
+diff --git a/gcc/fortran/simplify.c b/gcc/fortran/simplify.c
+index 6c1f4bd4fce..7d7e3f22f73 100644
+--- a/gcc/fortran/simplify.c
++++ b/gcc/fortran/simplify.c
+@@ -8457,10 +8457,31 @@ gfc_convert_constant (gfc_expr *e, bt type, int kind)
+       break;
+ 
+     case BT_CHARACTER:
+-      if (type == BT_CHARACTER)
+-	f = gfc_character2character;
+-      else
+-	goto oops;
++      switch (type)
++	{
++	case BT_INTEGER:
++	  f = gfc_character2int;
++	  break;
++
++	case BT_REAL:
++	  f = gfc_character2real;
++	  break;
++
++	case BT_COMPLEX:
++	  f = gfc_character2complex;
++	  break;
++
++	case BT_CHARACTER:
++	  f = gfc_character2character;
++	  break;
++
++	case BT_LOGICAL:
++	  f = gfc_character2logical;
++	  break;
++
++	default:
++	  goto oops;
++	}
+       break;
+ 
+     default:
+diff --git a/gcc/fortran/trans-const.c b/gcc/fortran/trans-const.c
+index 432d12bf168..b155e35cbdd 100644
+--- a/gcc/fortran/trans-const.c
++++ b/gcc/fortran/trans-const.c
+@@ -25,6 +25,7 @@ along with GCC; see the file COPYING3.  If not see
+ #include "coretypes.h"
+ #include "tree.h"
+ #include "gfortran.h"
++#include "options.h"
+ #include "trans.h"
+ #include "fold-const.h"
+ #include "stor-layout.h"
+@@ -330,7 +331,7 @@ gfc_conv_constant_to_tree (gfc_expr * expr)
+ 			gfc_get_int_type (expr->ts.kind),
+ 			gfc_build_string_const (expr->representation.length,
+ 						expr->representation.string));
+-	  if (!integer_zerop (tmp) && !integer_onep (tmp))
++	  if (!integer_zerop (tmp) && !integer_onep (tmp) && warn_surprising)
+ 	    gfc_warning (0, "Assigning value other than 0 or 1 to LOGICAL"
+ 			 " has undefined result at %L", &expr->where);
+ 	  return fold_convert (gfc_get_logical_type (expr->ts.kind), tmp);
+diff --git a/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_1.f90 b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_1.f90
+new file mode 100644
+index 00000000000..d504f92fbbc
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_1.f90
+@@ -0,0 +1,61 @@
++! { dg-do run }
++! { dg-options "-fdec -Wsurprising -Wcharacter-truncation" }
++!
++! Modified by Mark Eggleston <mark.eggleston@codethink.com>
++!
++program test
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  a = '1234'
++  b = '1234'
++  c = '12341234'
++  d = '1234'     ! { dg-warning "undefined result" }
++  e = 4h1234
++  f = 4h1234
++  g = 8h12341234
++  h = 4h1234     ! { dg-warning "undefined result" }
++  
++  if (a.ne.e) stop 1
++  if (b.ne.f) stop 2
++  if (c.ne.g) stop 3
++  if (d.neqv.h) stop 4
++
++  ! padded values
++  a = '12'
++  b = '12'
++  c = '12234'
++  d = '124'   ! { dg-warning "undefined result" }
++  e = 2h12
++  f = 2h12
++  g = 5h12234
++  h = 3h123   ! { dg-warning "undefined result" }
++
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++
++  ! truncated values
++  a = '123478'       ! { dg-warning "truncated in" }
++  b = '123478'       ! { dg-warning "truncated in" }
++  c = '12341234987'  ! { dg-warning "truncated in" }
++  d = '1234abc'      ! { dg-warning "truncated in|undefined result" }
++  e = 6h123478       ! { dg-warning "truncated in" }
++  f = 6h123478       ! { dg-warning "truncated in" }
++  g = 11h12341234987 ! { dg-warning "truncated in" }
++  h = 7h1234abc      ! { dg-warning "truncated in|undefined result" }
++
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_2.f90 b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_2.f90
+new file mode 100644
+index 00000000000..737ddc664de
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_2.f90
+@@ -0,0 +1,61 @@
++! { dg-do run }
++! { dg-options "-fdec-char-conversions -std=legacy -Wcharacter-truncation -Wsurprising" }
++!
++! Modified by Mark Eggleston <mark.eggleston@codethink.com>
++!
++program test
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  a = '1234'
++  b = '1234'
++  c = '12341234'
++  d = '1234'     ! { dg-warning "undefined result" }
++  e = 4h1234
++  f = 4h1234
++  g = 8h12341234
++  h = 4h1234     ! { dg-warning "undefined result" }
++  
++  if (a.ne.e) stop 1
++  if (b.ne.f) stop 2
++  if (c.ne.g) stop 3
++  if (d.neqv.h) stop 4
++
++  ! padded values
++  a = '12'
++  b = '12'
++  c = '12234'
++  d = '124'   ! { dg-warning "undefined result" }
++  e = 2h12
++  f = 2h12
++  g = 5h12234
++  h = 3h123   ! { dg-warning "undefined result" }
++
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++
++  ! truncated values
++  a = '123478'       ! { dg-warning "truncated in" }
++  b = '123478'       ! { dg-warning "truncated in" }
++  c = '12341234987'  ! { dg-warning "truncated in" }
++  d = '1234abc'      ! { dg-warning "truncated in|undefined result" }
++  e = 6h123478       ! { dg-warning "truncated in" }
++  f = 6h123478       ! { dg-warning "truncated in" }
++  g = 11h12341234987 ! { dg-warning "truncated in" }
++  h = 7h1234abc      ! { dg-warning "truncated in|undefined result" }
++
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_3.f90 b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_3.f90
+new file mode 100644
+index 00000000000..0ec494c4a92
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_assignment_3.f90
+@@ -0,0 +1,61 @@
++! { dg-do run }
++! { dg-options "-fdec -fno-dec-char-conversions" }
++!
++! Modified by Mark Eggleston <mark.eggleston@codethink.com>
++!
++program test
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  a = '1234'     ! { dg-error "Cannot convert" }
++  b = '1234'     ! { dg-error "Cannot convert" }
++  c = '12341234' ! { dg-error "Cannot convert" }
++  d = '1234'     ! { dg-error "Cannot convert" }
++  e = 4h1234
++  f = 4h1234
++  g = 8h12341234
++  h = 4h1234
++  
++  if (a.ne.e) stop 1
++  if (b.ne.f) stop 2
++  if (c.ne.g) stop 3
++  if (d.neqv.h) stop 4
++
++  ! padded values
++  a = '12'    ! { dg-error "Cannot convert" }
++  b = '12'    ! { dg-error "Cannot convert" }
++  c = '12234' ! { dg-error "Cannot convert" }
++  d = '124'   ! { dg-error "Cannot convert" }
++  e = 2h12
++  f = 2h12
++  g = 5h12234
++  h = 3h123
++
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++
++  ! truncated values
++  a = '123478'       ! { dg-error "Cannot convert" }
++  b = '123478'       ! { dg-error "Cannot convert" }
++  c = '12341234987'  ! { dg-error "Cannot convert" }
++  d = '1234abc'      ! { dg-error "Cannot convert" }
++  e = 6h123478       !
++  f = 6h123478       !
++  g = 11h12341234987 !
++  h = 7h1234abc      !
++
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_1.f90 b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_1.f90
+new file mode 100644
+index 00000000000..c493be9314b
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_1.f90
+@@ -0,0 +1,69 @@
++! { dg-do run }
++! { dg-options "-fdec -Wsurprising" }
++!
++! Modified by Mark Eggleston <mark.eggleston@codethink.com>
++!
++
++subroutine normal
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '1234', '1234', '12341234', '1234' / ! { dg-warning "undefined result" }
++  data e, f, g, h / 4h1234, 4h1234, 8h12341234, 4h1234 / ! { dg-warning "undefined result" }
++  
++  if (a.ne.e) stop 1
++  if (b.ne.f) stop 2
++  if (c.ne.g) stop 3
++  if (d.neqv.h) stop 4
++end subroutine
++
++subroutine padded
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '12', '12', '12334', '123' / ! { dg-warning "undefined result" }
++  data e, f, g, h / 2h12, 2h12, 5h12334, 3h123 / ! { dg-warning "undefined result" }
++  
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++end subroutine
++
++subroutine truncated
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '123478', '123478', '1234123498', '12345' /  ! { dg-warning "too long|undefined result" }
++  data e, f, g, h / 6h123478, 6h123478, 10h1234123498, 5h12345 / ! { dg-warning "too long|undefined result" }
++  
++  if (a.ne.e) stop 9
++  if (b.ne.f) stop 10
++  if (c.ne.g) stop 11
++  if (d.neqv.h) stop 12
++end subroutine
++
++program test
++  call normal
++  call padded
++  call truncated
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_2.f90 b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_2.f90
+new file mode 100644
+index 00000000000..c7d8e241cec
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_2.f90
+@@ -0,0 +1,69 @@
++! { dg-do run }
++! { dg-options "-fdec-char-conversions -std=legacy -Wsurprising" }
++!
++! Modified by Mark Eggleston <mark.eggleston@codethink.com>
++!
++
++subroutine normal
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '1234', '1234', '12341234', '1234' / ! { dg-warning "undefined result" }
++  data e, f, g, h / 4h1234, 4h1234, 8h12341234, 4h1234 / ! { dg-warning "undefined result" }
++  
++  if (a.ne.e) stop 1
++  if (b.ne.f) stop 2
++  if (c.ne.g) stop 3
++  if (d.neqv.h) stop 4
++end subroutine
++
++subroutine padded
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '12', '12', '12334', '123' / ! { dg-warning "undefined result" }
++  data e, f, g, h / 2h12, 2h12, 5h12334, 3h123 / ! { dg-warning "undefined result" }
++  
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++end subroutine
++
++subroutine truncated
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '123478', '123478', '1234123498', '12345' /  ! { dg-warning "too long|undefined result" }
++  data e, f, g, h / 6h123478, 6h123478, 10h1234123498, 5h12345 / ! { dg-warning "too long|undefined result" }
++  
++  if (a.ne.e) stop 9
++  if (b.ne.f) stop 10
++  if (c.ne.g) stop 11
++  if (d.neqv.h) stop 12
++end subroutine
++
++program test
++  call normal
++  call padded
++  call truncated
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_3.f90 b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_3.f90
+new file mode 100644
+index 00000000000..e7d084b5ffc
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec_char_conversion_in_data_3.f90
+@@ -0,0 +1,69 @@
++! { dg-do run }
++! { dg-options "-fdec -fno-dec-char-conversions" }
++!
++! Modified by Mark Eggleston <mark.eggleston@codethink.com>
++!
++
++subroutine normal
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '1234', '1234', '12341234', '1234' / ! { dg-error "Incompatible types" }
++  data e, f, g, h / 4h1234, 4h1234, 8h12341234, 4h1234 /
++  
++  if (a.ne.e) stop 1
++  if (b.ne.f) stop 2
++  if (c.ne.g) stop 3
++  if (d.neqv.h) stop 4
++end subroutine
++
++subroutine padded
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '12', '12', '12334', '123' / ! { dg-error "Incompatible types" }
++  data e, f, g, h / 2h12, 2h12, 5h12334, 3h123 /
++  
++  if (a.ne.e) stop 5
++  if (b.ne.f) stop 6
++  if (c.ne.g) stop 7
++  if (d.neqv.h) stop 8
++end subroutine
++
++subroutine truncated
++  integer(4) :: a
++  real(4) :: b
++  complex(4) :: c
++  logical(4) :: d
++  integer(4) :: e
++  real(4) :: f
++  complex(4) :: g
++  logical(4) :: h
++
++  data a, b, c, d / '123478', '123478', '1234123498', '12345' /  ! { dg-error "Incompatible types" }
++  data e, f, g, h / 6h123478, 6h123478, 10h1234123498, 5h12345 /
++  
++  if (a.ne.e) stop 9
++  if (b.ne.f) stop 10
++  if (c.ne.g) stop 11
++  if (d.neqv.h) stop 12
++end subroutine
++
++program test
++  call normal
++  call padded
++  call truncated
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/hollerith5.f90 b/gcc/testsuite/gfortran.dg/hollerith5.f90
+index ebd0a117c4f..d17f9ae40cf 100644
+--- a/gcc/testsuite/gfortran.dg/hollerith5.f90
++++ b/gcc/testsuite/gfortran.dg/hollerith5.f90
+@@ -1,8 +1,9 @@
+        ! { dg-do compile }
++       ! { dg-options "-Wsurprising" }
+        implicit none
+        logical b
+        b = 4Habcd ! { dg-warning "has undefined result" }
+        end
+ 
+-! { dg-warning "Hollerith constant" "const" { target *-*-* } 4 }
+-! { dg-warning "Conversion" "conversion" { target *-*-* } 4 }
++! { dg-warning "Hollerith constant" "const" { target *-*-* } 5 }
++! { dg-warning "Conversion" "conversion" { target *-*-* } 5 }
+diff --git a/gcc/testsuite/gfortran.dg/hollerith_legacy.f90 b/gcc/testsuite/gfortran.dg/hollerith_legacy.f90
+index c3322498345..9d7e989b552 100644
+--- a/gcc/testsuite/gfortran.dg/hollerith_legacy.f90
++++ b/gcc/testsuite/gfortran.dg/hollerith_legacy.f90
+@@ -1,5 +1,5 @@
+ ! { dg-do compile }
+-! { dg-options "-std=legacy" }
++! { dg-options "-std=legacy -Wsurprising" }
+ ! PR15966, PR18781 & PR16531
+ implicit none
+ complex(kind=8) x(2) 
+diff --git a/gcc/testsuite/gfortran.dg/no_char_to_int_assign.f90 b/gcc/testsuite/gfortran.dg/no_char_to_int_assign.f90
+new file mode 100644
+index 00000000000..ccfcc9ae512
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/no_char_to_int_assign.f90
+@@ -0,0 +1,20 @@
++! { dg-do compile }
++! { dg-options "-fdec-char-conversions" }
++!
++! Test character to int conversion in DATA types
++!
++! Test case contributed by Mark Eggleston <mark.eggleston@codethink.com>
++!
++program test
++  integer a
++  real b
++  complex c
++  logical d
++  character e
++
++  e = "A"
++  a = e ! { dg-error "Cannot convert" }
++  b = e ! { dg-error "Cannot convert" }
++  c = e ! { dg-error "Cannot convert" }
++  d = e ! { dg-error "Cannot convert" }
++end program
+-- 
+2.11.0
+

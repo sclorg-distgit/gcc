@@ -1,0 +1,658 @@
+From 6946d3e3e6a1d839772f4c59a5ab08901111800c Mon Sep 17 00:00:00 2001
+From: Mark Eggleston <markeggleston@codethink.com>
+Date: Thu, 23 May 2019 09:42:26 +0100
+Subject: [PATCH 05/16] dec comparisons
+
+Allow comparison of Hollerith constants with numeric and character
+expressions. Also allow comparison of character literalsa with numeric
+expressions.
+
+Enable using -fdec-comparisons or -fdec
+---
+ gcc/fortran/intrinsic.c                            |  5 +-
+ gcc/fortran/invoke.texi                            | 32 +++++++++++--
+ gcc/fortran/lang.opt                               |  5 ++
+ gcc/fortran/options.c                              |  1 +
+ gcc/fortran/resolve.c                              | 53 +++++++++++++++++++++-
+ .../gfortran.dg/dec-comparison-character_1.f90     | 18 ++++++++
+ .../gfortran.dg/dec-comparison-character_2.f90     | 18 ++++++++
+ .../gfortran.dg/dec-comparison-character_3.f90     | 17 +++++++
+ .../gfortran.dg/dec-comparison-complex_1.f90       | 22 +++++++++
+ .../gfortran.dg/dec-comparison-complex_2.f90       | 22 +++++++++
+ .../gfortran.dg/dec-comparison-complex_3.f90       | 22 +++++++++
+ gcc/testsuite/gfortran.dg/dec-comparison-int_1.f90 | 31 +++++++++++++
+ gcc/testsuite/gfortran.dg/dec-comparison-int_2.f90 | 31 +++++++++++++
+ gcc/testsuite/gfortran.dg/dec-comparison-int_3.f90 | 21 +++++++++
+ .../gfortran.dg/dec-comparison-real_1.f90          | 31 +++++++++++++
+ .../gfortran.dg/dec-comparison-real_2.f90          | 31 +++++++++++++
+ .../gfortran.dg/dec-comparison-real_3.f90          | 31 +++++++++++++
+ gcc/testsuite/gfortran.dg/dec-comparison.f90       | 41 +++++++++++++++++
+ 18 files changed, 424 insertions(+), 8 deletions(-)
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-character_1.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-character_2.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-character_3.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-complex_1.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-complex_2.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-complex_3.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-int_1.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-int_2.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-int_3.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-real_1.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-real_2.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison-real_3.f90
+ create mode 100644 gcc/testsuite/gfortran.dg/dec-comparison.f90
+
+diff --git a/gcc/fortran/intrinsic.c b/gcc/fortran/intrinsic.c
+index e94d5d3225f..6d47ae3105f 100644
+--- a/gcc/fortran/intrinsic.c
++++ b/gcc/fortran/intrinsic.c
+@@ -4020,7 +4020,7 @@ add_conversions (void)
+ 
+   /* Flang allows character conversions similar to Hollerith conversions
+      - the first characters will be turned into ascii values. */
+-  if (flag_dec_char_conversions)
++  if (flag_dec_char_conversions || flag_dec_comparisons)
+     {
+       /* Character-Integer conversions.  */
+       for (i = 0; gfc_integer_kinds[i].kind != 0; i++)
+@@ -5150,7 +5150,8 @@ gfc_convert_type_warn (gfc_expr *expr, gfc_typespec *ts, int eflag, int wflag)
+ 			     gfc_typename (&from_ts), gfc_typename (ts),
+ 			     &expr->where);
+ 	}
+-      else if (flag_dec_char_conversions && from_ts.type == BT_CHARACTER
++      else if ((flag_dec_char_conversions || flag_dec_comparisons)
++	       && from_ts.type == BT_CHARACTER
+ 	       && (gfc_numeric_ts (ts) || ts->type == BT_LOGICAL))
+ 	{
+ 	  if (warn_conversion)
+diff --git a/gcc/fortran/invoke.texi b/gcc/fortran/invoke.texi
+index 8364c67b2df..d101b01e301 100644
+--- a/gcc/fortran/invoke.texi
++++ b/gcc/fortran/invoke.texi
+@@ -117,15 +117,16 @@ by type.  Explanations are in the following sections.
+ @item Fortran Language Options
+ @xref{Fortran Dialect Options,,Options controlling Fortran dialect}.
+ @gccoptlist{-fall-intrinsics -fbackslash -fcray-pointer -fd-lines-as-code @gol
+--fd-lines-as-comments @gol
+--fdec -fdec-structure -fdec-intrinsic-ints -fdec-static -fdec-math @gol
+--fdec-include -fdefault-double-8 -fdefault-integer-8 -fdefault-real-8 @gol
+--fdefault-real-10 -fdefault-real-16 -fdollar-ok -ffixed-line-length-@var{n} @gol
++-fd-lines-as-comments -fdec -fdec-structure -fdec-intrinsic-ints @gol
++-fdec-static -fdec-math -fdec-include -fdec-format-defaults @gol
++-fdec-add-missing-indexes -fdec-blank-format-item -fdec-comparisons @gol
++-fdefault-double-8 -fdefault-integer-8 -fdefault-real-8 -fdefault-real-10 @gol
++-fdefault-real-16 -fdollar-ok -ffixed-line-length-@var{n} @gol
+ -ffixed-line-length-none -fpad-source -ffree-form -ffree-line-length-@var{n} @gol
+ -ffree-line-length-none -fimplicit-none -finteger-4-integer-8 @gol
+ -fmax-identifier-length -fmodule-private -ffixed-form -fno-range-check @gol
+ -fopenacc -fopenmp -freal-4-real-10 -freal-4-real-16 -freal-4-real-8 @gol
+--freal-8-real-10 -freal-8-real-16 -freal-8-real-4 -std=@var{std}
++-freal-8-real-10 -freal-8-real-16 -freal-8-real-4 -std=@var{std} @gol
+ -ftest-forall-temp
+ }
+ 
+@@ -283,6 +284,27 @@ Enable parsing of INCLUDE as a statement in addition to parsing it as
+ INCLUDE line.  When parsed as INCLUDE statement, INCLUDE does not have to
+ be on a single line and can use line continuations.
+ 
++@item -fdec-add-missing-indexes
++@opindex @code{fdec-add-missing-indexes}
++Enable the insertion of missing dimensions using the lower bounds of those
++dimensions.
++
++@item -fdec-format-defaults
++@opindex @code{fdec-format-defaults}
++Enable format specifiers F, G and I to be used without width specifiers,
++default widths will be used instead.
++
++@item -fdec-blank-format-item
++@opindex @code{fdec-blank-format-item}
++Enable a blank format item at the end of a format specification i.e. nothing
++following the final comma.
++
++@item -fdec-comparisons
++@opindex @code{fdec-comparisons}
++Enable comparison of Hollerith constants and character literals with numeric and
++character expressions. Also enable comparison of Hollerith constants with numeric
++expressions.
++
+ @item -fdollar-ok
+ @opindex @code{fdollar-ok}
+ @cindex @code{$}
+diff --git a/gcc/fortran/lang.opt b/gcc/fortran/lang.opt
+index 5746b99b1d4..a957b90707f 100644
+--- a/gcc/fortran/lang.opt
++++ b/gcc/fortran/lang.opt
+@@ -449,6 +449,11 @@ Fortran Var(flag_dec_char_conversions)
+ Enable the use of character literals in assignments and data statements
+ for non-character variables.
+ 
++fdec-comparisons
++Fortran Var(flag_dec_comparisons)
++Enable the use of hollerith constants in comparisons. Also enables comparison
++of character literals and numeric vaiables.
++
+ fdec-include
+ Fortran Var(flag_dec_include)
+ Enable legacy parsing of INCLUDE as statement.
+diff --git a/gcc/fortran/options.c b/gcc/fortran/options.c
+index e97b1568810..b652be70f3d 100644
+--- a/gcc/fortran/options.c
++++ b/gcc/fortran/options.c
+@@ -77,6 +77,7 @@ set_dec_flags (int value)
+   SET_BITFLAG (flag_dec_format_defaults, value, value);
+   SET_BITFLAG (flag_dec_duplicates, value, value);
+   SET_BITFLAG (flag_dec_char_conversions, value, value);
++  SET_BITFLAG (flag_dec_comparisons, value, value);
+ }
+ 
+ /* Finalize DEC flags.  */
+diff --git a/gcc/fortran/resolve.c b/gcc/fortran/resolve.c
+index 43559185481..c8b6333874b 100644
+--- a/gcc/fortran/resolve.c
++++ b/gcc/fortran/resolve.c
+@@ -3888,6 +3888,30 @@ convert_integer_to_logical (gfc_expr *e)
+     }
+ }
+ 
++/* Return true if TYPE is character based, false otherwise.  */
++
++static int
++is_character_based (bt type)
++{
++  return type == BT_CHARACTER || type == BT_HOLLERITH;
++}
++
++
++/* If E is a hollerith, convert it to character and issue a warning
++   for the conversion.  */
++
++static void
++convert_hollerith_to_character (gfc_expr *e)
++{
++  if (e->ts.type == BT_HOLLERITH)
++    {
++      gfc_typespec t;
++      t.type = BT_CHARACTER;
++      t.kind = e->ts.kind;
++      gfc_convert_type_warn (e, &t, 2, 1);
++    }
++}
++
+ /* If E is a logical, convert it to an integer and issue a warning
+    for the conversion.  */
+ 
+@@ -3904,6 +3928,17 @@ convert_logical_to_integer (gfc_expr *e)
+     }
+ }
+ 
++/* Convert to numeric and issue a warning for the conversion.  */
++
++static void
++convert_to_numeric (gfc_expr *a, gfc_expr *b)
++{
++  gfc_typespec t;
++  t.type = b->ts.type;
++  t.kind = b->ts.kind;
++  gfc_convert_type_warn (a, &t, 2, 1);
++}
++
+ /* Resolve an operator expression node.  This can involve replacing the
+    operation with a user defined function call.  */
+ 
+@@ -4108,6 +4143,13 @@ resolve_operator (gfc_expr *e)
+ 	  convert_logical_to_integer (op2);
+ 	}
+ 
++      if (flag_dec_comparisons && is_character_based (op1->ts.type)
++          && is_character_based (op2->ts.type))
++	{
++	  convert_hollerith_to_character (op1);
++	  convert_hollerith_to_character (op2);
++	}
++
+       if (op1->ts.type == BT_CHARACTER && op2->ts.type == BT_CHARACTER
+ 	  && op1->ts.kind == op2->ts.kind)
+ 	{
+@@ -4116,6 +4158,15 @@ resolve_operator (gfc_expr *e)
+ 	  break;
+ 	}
+ 
++      if (flag_dec_comparisons && is_character_based (op1->ts.type)
++          && op1->expr_type == EXPR_CONSTANT && gfc_numeric_ts (&op2->ts))
++	convert_to_numeric (op1, op2);
++
++      if (flag_dec_comparisons && gfc_numeric_ts (&op1->ts)
++	  && is_character_based (op2->ts.type)
++	  && op2->expr_type == EXPR_CONSTANT)
++	convert_to_numeric (op2, op1);
++
+       if (gfc_numeric_ts (&op1->ts) && gfc_numeric_ts (&op2->ts))
+ 	{
+ 	  gfc_type_convert_binary (e, 1);
+@@ -10499,7 +10550,7 @@ resolve_ordinary_assign (gfc_code *code, gfc_namespace *ns)
+ 
+   if ((gfc_numeric_ts (&lhs->ts) || lhs->ts.type == BT_LOGICAL)
+       && rhs->ts.type == BT_CHARACTER
+-      && rhs->expr_type != EXPR_CONSTANT)
++      && (rhs->expr_type != EXPR_CONSTANT || !flag_dec_char_conversions))
+     {
+       gfc_error ("Cannot convert CHARACTER into %s at %L",
+                  gfc_typename (&lhs->ts),     
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-character_1.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-character_1.f90
+new file mode 100644
+index 00000000000..d8209163a0e
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-character_1.f90
+@@ -0,0 +1,18 @@
++! { dg-do run }
++! { dg-options "-fdec -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  character(4) :: c = 4HJMAC ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.ne.4HJMAC) stop 1 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.ne."JMAC") stop 2 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.eq."JMAN") stop 3 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if ("JMAC".eq.4HJMAN) stop 4 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if ("AAAA".eq.5HAAAAA) stop 5 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if ("BBBBB".eq.5HBBBB ) stop 6 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.ne.c) stop 7 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (c.ne.4HJMAC) stop 8 ! { dg-warning "HOLLERITH to CHARACTER" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-character_2.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-character_2.f90
+new file mode 100644
+index 00000000000..7332acbaf5c
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-character_2.f90
+@@ -0,0 +1,18 @@
++! { dg-do run }
++! { dg-options "-fdec-comparisons -std=legacy -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  character(4) :: c = 4HJMAC ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.ne.4HJMAC) stop 1 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.ne."JMAC") stop 2 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.eq."JMAN") stop 3 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if ("JMAC".eq.4HJMAN) stop 4 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if ("AAAA".eq.5HAAAAA) stop 5 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if ("BBBBB".eq.5HBBBB ) stop 6 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (4HJMAC.ne.c) stop 7 ! { dg-warning "HOLLERITH to CHARACTER" }
++  if (c.ne.4HJMAC) stop 8 ! { dg-warning "HOLLERITH to CHARACTER" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-character_3.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-character_3.f90
+new file mode 100644
+index 00000000000..c20c012478a
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-character_3.f90
+@@ -0,0 +1,17 @@
++! { dg-do compile }
++! { dg-options "-fdec -fno-dec-comparisons" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  character(4) :: c = 4HJMAC
++  if (4HJMAC.ne.4HJMAC) stop 1 ! { dg-error "Operands of comparison" }
++  if (4HJMAC.ne."JMAC") stop 2 ! { dg-error "Operands of comparison" }
++  if (4HJMAC.eq."JMAN") stop 3 ! { dg-error "Operands of comparison" }
++  if ("JMAC".eq.4HJMAN) stop 4 !  { dg-error "Operands of comparison" }
++  if ("AAAA".eq.5HAAAAA) stop 5 ! { dg-error "Operands of comparison" }
++  if ("BBBBB".eq.5HBBBB ) stop 6 ! { dg-error "Operands of comparison" }
++  if (4HJMAC.ne.c) stop 7 ! { dg-error "Operands of comparison" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-complex_1.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-complex_1.f90
+new file mode 100644
+index 00000000000..3495f2ae414
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-complex_1.f90
+@@ -0,0 +1,22 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  complex(4) :: a
++  complex(4) :: b
++  a = 8HABCDABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCDABCD", b);
++  ! Hollerith constants
++  if (a.ne.8HABCDABCD) stop 1 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.eq.8HABCEABCE) stop 2 ! { dg-warning "Conversion from HOLLERITH" }
++  if (8HABCDABCD.ne.b) stop 3 ! { dg-warning "Conversion from HOLLERITH" }
++  if (8HABCEABCE.eq.b) stop 4 ! { dg-warning "Conversion from HOLLERITH" }
++  ! Character literals
++  if (a.ne."ABCDABCD") stop 5 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.eq."ABCEABCE") stop 6 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCDABCD".ne.b) stop 7 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCEABCE".eq.b) stop 8 ! { dg-warning "Conversion from CHARACTER" }
++end program
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-complex_2.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-complex_2.f90
+new file mode 100644
+index 00000000000..c38042cc600
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-complex_2.f90
+@@ -0,0 +1,22 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec-comparisons -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  complex(4) :: a
++  complex(4) :: b
++  a = 8HABCDABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCDABCD", b);
++  ! Hollerith constants
++  if (a.ne.8HABCDABCD) stop 1 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.eq.8HABCEABCE) stop 2 ! { dg-warning "Conversion from HOLLERITH" }
++  if (8HABCDABCD.ne.b) stop 3 ! { dg-warning "Conversion from HOLLERITH" }
++  if (8HABCEABCE.eq.b) stop 4 ! { dg-warning "Conversion from HOLLERITH" }
++  ! Character literals
++  if (a.ne."ABCDABCD") stop 5 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.eq."ABCEABCE") stop 6 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCDABCD".ne.b) stop 7 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCEABCE".eq.b) stop 8 ! { dg-warning "Conversion from CHARACTER" }
++end program
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-complex_3.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-complex_3.f90
+new file mode 100644
+index 00000000000..9b27fc4d502
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-complex_3.f90
+@@ -0,0 +1,22 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec -fno-dec-comparisons -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  complex(4) :: a
++  complex(4) :: b
++  a = 8HABCDABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCDABCD", b);
++  ! Hollerith constants
++  if (a.ne.8HABCDABCD) stop 1 ! { dg-error "Operands of comparison" }
++  if (a.eq.8HABCEABCE) stop 2 ! { dg-error "Operands of comparison" }
++  if (8HABCDABCD.ne.b) stop 3 ! { dg-error "Operands of comparison" }
++  if (8HABCEABCE.eq.b) stop 4 ! { dg-error "Operands of comparison" }
++  ! character literals
++  if (a.ne."ABCDABCD") stop 5 ! { dg-error "Operands of comparison" }
++  if (a.eq."ABCEABCE") stop 6 ! { dg-error "Operands of comparison" }
++  if ("ABCDABCD".ne.b) stop 7 ! { dg-error "Operands of comparison" }
++  if ("ABCEABCE".eq.b) stop 8 ! { dg-error "Operands of comparison" }
++end program
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-int_1.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-int_1.f90
+new file mode 100644
+index 00000000000..c93b61e29cf
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-int_1.f90
+@@ -0,0 +1,31 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  integer(4) :: a
++  integer(4) :: b
++  a = 4HABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCD", b)
++  ! Hollerith constants
++  if (a.ne.4HABCD) stop 1 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.eq.4HABCE) stop 2 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCD.ne.b) stop 3 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.eq.b) stop 4 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.lt.a) stop 5 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.gt.4HABCE) stop 6 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.le.a) stop 7 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.ge.4HABCE) stop 8 ! { dg-warning "Conversion from HOLLERITH" }
++  ! Character literals
++  if (a.ne."ABCD") stop 9 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.eq."ABCE") stop 10 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCD".ne.b) stop 11 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".eq.b) stop 12 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".lt.a) stop 13 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.gt."ABCE") stop 14 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".le.a) stop 15 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.ge."ABCE") stop 16 ! { dg-warning "Conversion from CHARACTER" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-int_2.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-int_2.f90
+new file mode 100644
+index 00000000000..cd1ae783d41
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-int_2.f90
+@@ -0,0 +1,31 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec-comparisons -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  integer(4) :: a
++  integer(4) :: b
++  a = 4HABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCD", b)
++  ! Hollerith constants
++  if (a.ne.4HABCD) stop 1 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.eq.4HABCE) stop 2 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCD.ne.b) stop 3 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.eq.b) stop 4 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.lt.a) stop 5 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.gt.4HABCE) stop 6 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.le.a) stop 7 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.ge.4HABCE) stop 8 ! { dg-warning "Conversion from HOLLERITH" }
++  ! Character literals
++  if (a.ne."ABCD") stop 9 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.eq."ABCE") stop 10 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCD".ne.b) stop 11 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".eq.b) stop 12 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".lt.a) stop 13 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.gt."ABCE") stop 14 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".le.a) stop 15 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.ge."ABCE") stop 16 ! { dg-warning "Conversion from CHARACTER" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-int_3.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-int_3.f90
+new file mode 100644
+index 00000000000..b350075afe7
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-int_3.f90
+@@ -0,0 +1,21 @@
++! { dg-do compile }
++! { dg-options "-fdec -fno-dec-comparisons -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  integer(4) :: a
++  integer(4) :: b
++  a = 4HABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCD", b)
++  if (a.ne.4HABCD) stop 1 ! { dg-error "Operands of comparison" }
++  if (a.eq.4HABCE) stop 2 ! { dg-error "Operands of comparison" }
++  if (4HABCD.ne.b) stop 3 ! { dg-error "Operands of comparison" }
++  if (4HABCE.eq.b) stop 4 ! { dg-error "Operands of comparison" }
++  if (4HABCE.lt.a) stop 5 ! { dg-error "Operands of comparison" }
++  if (a.gt.4HABCE) stop 6 ! { dg-error "Operands of comparison" }
++  if (4HABCE.le.a) stop 7 ! { dg-error "Operands of comparison" }
++  if (a.ge.4HABCE) stop 8 ! { dg-error "Operands of comparison" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-real_1.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-real_1.f90
+new file mode 100644
+index 00000000000..08b66aaebfd
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-real_1.f90
+@@ -0,0 +1,31 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  real(4) :: a
++  real(4) :: b
++  a = 4HABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCD", b)
++  ! Hollerith constants
++  if (a.ne.4HABCD) stop 1 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.eq.4HABCE) stop 2 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCD.ne.b) stop 3 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.eq.b) stop 4 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.lt.a) stop 5 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.gt.4HABCE) stop 6 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.le.a) stop 7 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.ge.4HABCE) stop 8 ! { dg-warning "Conversion from HOLLERITH" }
++  ! Character literals
++  if (a.ne."ABCD") stop 9 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.eq."ABCE") stop 10 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCD".ne.b) stop 11 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".eq.b) stop 12 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".lt.a) stop 13 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.gt."ABCE") stop 14 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".le.a) stop 15 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.ge."ABCE") stop 16 ! { dg-warning "Conversion from CHARACTER" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-real_2.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-real_2.f90
+new file mode 100644
+index 00000000000..244abb84868
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-real_2.f90
+@@ -0,0 +1,31 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec-comparisons -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  real(4) :: a
++  real(4) :: b
++  a = 4HABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCD", b)
++  ! Hollerith constants
++  if (a.ne.4HABCD) stop 1 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.eq.4HABCE) stop 2 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCD.ne.b) stop 3 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.eq.b) stop 4 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.lt.a) stop 5 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.gt.4HABCE) stop 6 ! { dg-warning "Conversion from HOLLERITH" }
++  if (4HABCE.le.a) stop 7 ! { dg-warning "Conversion from HOLLERITH" }
++  if (a.ge.4HABCE) stop 8 ! { dg-warning "Conversion from HOLLERITH" }
++  ! Character literals
++  if (a.ne."ABCD") stop 9 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.eq."ABCE") stop 10 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCD".ne.b) stop 11 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".eq.b) stop 12 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".lt.a) stop 13 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.gt."ABCE") stop 14 ! { dg-warning "Conversion from CHARACTER" }
++  if ("ABCE".le.a) stop 15 ! { dg-warning "Conversion from CHARACTER" }
++  if (a.ge."ABCE") stop 16 ! { dg-warning "Conversion from CHARACTER" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison-real_3.f90 b/gcc/testsuite/gfortran.dg/dec-comparison-real_3.f90
+new file mode 100644
+index 00000000000..111c648f08c
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison-real_3.f90
+@@ -0,0 +1,31 @@
++! { dg-do run }
++! { dg-options "-std=legacy -fdec -fno-dec-comparisons -Wconversion" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++
++program convert
++  real(4) :: a
++  real(4) :: b
++  a = 4HABCD ! { dg-warning "Conversion from HOLLERITH" }
++  b = transfer("ABCD", b)
++  ! Hollerith constants
++  if (a.ne.4HABCD) stop 1 ! { dg-error "Operands of comparison" }
++  if (a.eq.4HABCE) stop 2 ! { dg-error "Operands of comparison" }
++  if (4HABCD.ne.b) stop 3 ! { dg-error "Operands of comparison" }
++  if (4HABCE.eq.b) stop 4 ! { dg-error "Operands of comparison" }
++  if (4HABCE.lt.a) stop 5 ! { dg-error "Operands of comparison" }
++  if (a.gt.4HABCE) stop 6 ! { dg-error "Operands of comparison" }
++  if (4HABCE.le.a) stop 7 ! { dg-error "Operands of comparison" }
++  if (a.ge.4HABCE) stop 8 ! { dg-error "Operands of comparison" }
++  ! Character literals
++  if (a.ne."ABCD") stop 9 ! { dg-error "Operands of comparison" }
++  if (a.eq."ABCE") stop 10 ! { dg-error "Operands of comparison" }
++  if ("ABCD".ne.b) stop 11 ! { dg-error "Operands of comparison" }
++  if ("ABCE".eq.b) stop 12 ! { dg-error "Operands of comparison" }
++  if ("ABCE".lt.a) stop 13 ! { dg-error "Operands of comparison" }
++  if (a.gt."ABCE") stop 14 ! { dg-error "Operands of comparison" }
++  if ("ABCE".le.a) stop 15 ! { dg-error "Operands of comparison" }
++  if (a.ge."ABCE") stop 16 ! { dg-error "Operands of comparison" }
++end program
++
+diff --git a/gcc/testsuite/gfortran.dg/dec-comparison.f90 b/gcc/testsuite/gfortran.dg/dec-comparison.f90
+new file mode 100644
+index 00000000000..b0b28e55111
+--- /dev/null
++++ b/gcc/testsuite/gfortran.dg/dec-comparison.f90
+@@ -0,0 +1,41 @@
++! { dg-do run }
++! { dg-options "-fdec" }
++!
++! Test case contributed by Mark Eggleston  <mark.eggleston@codethink.com>
++!
++! Hollerith constants and character literals are allowed in comparisons,
++! check that character variables can not be compared with numeric variables.
++
++program convert
++  character(4) :: a = 4hJMAC
++  integer(4) :: b = "JMAC"
++  real(4) :: c = "JMAC"
++  complex(4) :: d = "JMACJMAC"
++  ! integers
++  if (a.ne.b) stop 1 ! { dg-error "Operands of comparison" }
++  if (b.eq.a) stop 2 ! { dg-error "Operands of comparison" }
++  if (a.ge.b) stop 3 ! { dg-error "Operands of comparison" }
++  if (b.ge.a) stop 4 ! { dg-error "Operands of comparison" }
++  if (a.gt.b) stop 5 ! { dg-error "Operands of comparison" }
++  if (b.gt.a) stop 6 ! { dg-error "Operands of comparison" }
++  if (a.le.b) stop 3 ! { dg-error "Operands of comparison" }
++  if (b.le.a) stop 4 ! { dg-error "Operands of comparison" }
++  if (a.lt.b) stop 5 ! { dg-error "Operands of comparison" }
++  if (b.lt.a) stop 6 ! { dg-error "Operands of comparison" }
++  ! reals
++  if (a.ne.c) stop 7 ! { dg-error "Operands of comparison" }
++  if (c.eq.a) stop 8 ! { dg-error "Operands of comparison" }
++  if (a.ge.c) stop 9 ! { dg-error "Operands of comparison" }
++  if (c.ge.a) stop 10 ! { dg-error "Operands of comparison" }
++  if (a.gt.c) stop 11 ! { dg-error "Operands of comparison" }
++  if (c.gt.a) stop 12 ! { dg-error "Operands of comparison" }
++  if (a.le.c) stop 13 ! { dg-error "Operands of comparison" }
++  if (c.le.a) stop 14 ! { dg-error "Operands of comparison" }
++  if (a.lt.c) stop 15 ! { dg-error "Operands of comparison" }
++  if (c.lt.a) stop 16 ! { dg-error "Operands of comparison" }
++  ! complexes
++  a = "JMACJMAC"
++  if (a.ne.d) stop 17 ! { dg-error "Operands of comparison" }
++  if (d.eq.a) stop 18 ! { dg-error "Operands of comparison" }
++end program
++
+-- 
+2.11.0
+

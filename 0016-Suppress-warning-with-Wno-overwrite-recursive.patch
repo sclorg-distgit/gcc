@@ -1,0 +1,49 @@
+From 9bf3b68e118a749ab87f52649fd56aca059470e8 Mon Sep 17 00:00:00 2001
+From: Mark Eggleston <markeggleston@codethink.com>
+Date: Tue, 16 Apr 2019 09:09:12 +0100
+Subject: [PATCH 16/16] Suppress warning with -Wno-overwrite-recursive
+
+The message "Warning: Flag '-fno-automatic' overwrites '-frecursive'" is
+output by default when -fno-automatic and -frecursive are used together.
+It warns that recursion may be broken, however if all the relavent variables
+in the recursive procedure have automatic attributes the warning is
+unnecessary so -Wno-overwrite-recursive can be used to suppress it. This
+will allow compilation when warnings are regarded as errors.
+
+Suppress warning with -Wno-overwrite-recursive
+---
+ gcc/fortran/lang.opt  | 4 ++++
+ gcc/fortran/options.c | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/gcc/fortran/lang.opt b/gcc/fortran/lang.opt
+index dca3fd27aa3..e5074f614e3 100644
+--- a/gcc/fortran/lang.opt
++++ b/gcc/fortran/lang.opt
+@@ -293,6 +293,10 @@ Wopenmp-simd
+ Fortran
+ ; Documented in C
+ 
++Woverwrite-recursive
++Fortran Warning Var(warn_overwrite_recursive) Init(1)
++Warn that -fno-automatic may break recursion.
++
+ Wpedantic
+ Fortran
+ ; Documented in common.opt
+diff --git a/gcc/fortran/options.c b/gcc/fortran/options.c
+index f417f48f6a7..6cbc64bf1ae 100644
+--- a/gcc/fortran/options.c
++++ b/gcc/fortran/options.c
+@@ -418,7 +418,7 @@ gfc_post_options (const char **pfilename)
+       && flag_max_stack_var_size != 0)
+     gfc_warning_now (0, "Flag %<-fno-automatic%> overwrites %<-fmax-stack-var-size=%d%>",
+ 		     flag_max_stack_var_size);
+-  else if (!flag_automatic && flag_recursive)
++  else if (!flag_automatic && flag_recursive && warn_overwrite_recursive)
+     gfc_warning_now (0, "Flag %<-fno-automatic%> overwrites %<-frecursive%>");
+   else if (!flag_automatic && flag_openmp)
+     gfc_warning_now (0, "Flag %<-fno-automatic%> overwrites %<-frecursive%> implied by "
+-- 
+2.11.0
+
